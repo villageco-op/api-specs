@@ -2730,61 +2730,6 @@
         }
       }
     },
-    "/api/stripe/webhook": {
-      "post": {
-        "operationId": "handleStripeWebhook",
-        "description": "Secure server-to-server listener for Stripe events.",
-        "application/json": {
-          "schema": {
-            "def": {
-              "type": "string"
-            },
-            "type": "string",
-            "format": null,
-            "minLength": null,
-            "maxLength": null
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Received",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "received": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "received"
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Webhook Signature Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/stripe/connect/onboard": {
       "post": {
         "operationId": "generateStripeOnboardingLink",
