@@ -7,6 +7,816 @@
   },
   "components": {
     "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "SuccessWithEntity": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SuccessResponse"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "entityId": {
+                "$ref": "#/components/schemas/EntityId"
+              }
+            },
+            "required": [
+              "entityId"
+            ]
+          }
+        ]
+      },
+      "EntityId": {
+        "type": "string",
+        "format": "uuid",
+        "example": "123e4567-e89b-12d3-a456-426614174000"
+      },
+      "EntityParam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/EntityId"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "UserParam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UserId"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "UserId": {
+        "type": "string",
+        "example": "user_123456789",
+        "description": "The unique identifier for the user, prefixed with \"user_\""
+      },
+      "ProduceStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "paused",
+          "deleted"
+        ],
+        "example": "active",
+        "description": "The status of the produce listing"
+      },
+      "OrderStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "completed",
+          "canceled"
+        ],
+        "example": "pending",
+        "description": "The lifecycle status of the order"
+      },
+      "FulfillmentType": {
+        "type": "string",
+        "enum": [
+          "pickup",
+          "delivery"
+        ],
+        "example": "delivery",
+        "description": "The fulfillment type for completing an order"
+      },
+      "SubscriptionStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "paused",
+          "canceled"
+        ],
+        "example": "active",
+        "description": "The status of the subscription"
+      },
+      "ResourceId": {
+        "type": "string",
+        "format": "uuid",
+        "example": "123e4567-e89b-12d3-a456-426614174000",
+        "description": "The standard UUID identifier for the resource"
+      },
+      "Latitude": {
+        "type": "number",
+        "nullable": true,
+        "minimum": -90,
+        "maximum": 90,
+        "example": 37.7749,
+        "description": "Latitude coordinate"
+      },
+      "Longitude": {
+        "type": "number",
+        "nullable": true,
+        "minimum": -180,
+        "maximum": 180,
+        "example": -122.4194,
+        "description": "Longitude coordinate"
+      },
+      "WeightOz": {
+        "type": "number",
+        "minimum": 0,
+        "example": 16,
+        "description": "Weight in ounces (oz)"
+      },
+      "PriceDollars": {
+        "type": "number",
+        "minimum": 0,
+        "exclusiveMinimum": true,
+        "example": 12.5,
+        "description": "Price/Amount in USD"
+      },
+      "ImageUrl": {
+        "type": "string",
+        "format": "uri",
+        "example": "https://assets.example.com/produce/apples.jpg",
+        "description": "A fully qualified URL to an image asset"
+      },
+      "Address": {
+        "type": "string",
+        "minLength": 5,
+        "example": "123 Farm Lane, Springfield, OR 97477",
+        "description": "Full physical street address"
+      },
+      "Location": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "nullable": true,
+            "example": 37.7749
+          },
+          "lng": {
+            "type": "number",
+            "nullable": true,
+            "example": -122.4194
+          },
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "lat",
+          "lng",
+          "address"
+        ]
+      },
+      "IsoDateTime": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2026-03-27T09:00:00Z",
+        "description": "ISO 8601 UTC timestamp"
+      },
+      "IsoDate": {
+        "type": "string",
+        "format": "date",
+        "example": "2026-03-27",
+        "description": "ISO 8601 calendar date (YYYY-MM-DD)"
+      },
+      "PaginationMetadata": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "example": 45,
+            "description": "Total number of reviews available"
+          },
+          "page": {
+            "type": "number",
+            "example": 1
+          },
+          "limit": {
+            "type": "number",
+            "example": 10
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 5
+          }
+        },
+        "required": [
+          "total",
+          "page",
+          "limit",
+          "totalPages"
+        ]
+      },
+      "CreateProducePayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Organic Honeycrisp Apples",
+            "description": "The public title of the produce listing"
+          },
+          "produceType": {
+            "type": "string",
+            "example": "fruit",
+            "description": "Category of the produce (e.g., vegetable, fruit, herb)"
+          },
+          "pricePerOz": {
+            "$ref": "#/components/schemas/PriceDollars"
+          },
+          "totalOzInventory": {
+            "$ref": "#/components/schemas/WeightOz"
+          },
+          "availableBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "example": "2026-03-25T10:00:00Z",
+            "description": "The date and time when the produce will be ready for pickup or delivery"
+          },
+          "harvestFrequencyDays": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 7,
+            "description": "How often this item is typically harvested, in days"
+          },
+          "seasonStart": {
+            "$ref": "#/components/schemas/IsoDate"
+          },
+          "seasonEnd": {
+            "$ref": "#/components/schemas/IsoDate"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageUrl"
+            },
+            "default": [],
+            "example": [
+              "https://example.com/apple.jpg"
+            ],
+            "description": "List of gallery images for the product"
+          },
+          "isSubscribable": {
+            "type": "boolean",
+            "default": false,
+            "example": true,
+            "description": "Whether customers can set up recurring orders for this item"
+          }
+        },
+        "required": [
+          "title",
+          "pricePerOz",
+          "totalOzInventory",
+          "harvestFrequencyDays",
+          "seasonStart",
+          "seasonEnd"
+        ]
+      },
+      "UpdateProducePayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Organic Honeycrisp Apples",
+            "description": "The public title of the produce listing"
+          },
+          "produceType": {
+            "type": "string",
+            "example": "fruit",
+            "description": "Category of the produce (e.g., vegetable, fruit, herb)"
+          },
+          "pricePerOz": {
+            "$ref": "#/components/schemas/PriceDollars"
+          },
+          "totalOzInventory": {
+            "$ref": "#/components/schemas/WeightOz"
+          },
+          "availableBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "example": "2026-03-25T10:00:00Z",
+            "description": "The date and time when the produce will be ready for pickup or delivery"
+          },
+          "harvestFrequencyDays": {
+            "type": "integer",
+            "minimum": 0,
+            "example": 7,
+            "description": "How often this item is typically harvested, in days"
+          },
+          "seasonStart": {
+            "$ref": "#/components/schemas/IsoDate"
+          },
+          "seasonEnd": {
+            "$ref": "#/components/schemas/IsoDate"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageUrl"
+            },
+            "example": [
+              "https://example.com/apple.jpg"
+            ],
+            "description": "List of gallery images for the product"
+          },
+          "isSubscribable": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether customers can set up recurring orders for this item"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProduceStatus"
+          }
+        }
+      },
+      "ProduceListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ProduceListItem"
+        }
+      },
+      "ProduceListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "thumbnail": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Honeycrisp Apples"
+          },
+          "sellerName": {
+            "type": "string",
+            "nullable": true,
+            "example": "Smith Family Farm"
+          },
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "price": {
+            "type": "string",
+            "example": "4.50",
+            "description": "Formatted price string"
+          },
+          "amount": {
+            "type": "string",
+            "example": "16oz",
+            "description": "Formatted weight/quantity string"
+          },
+          "availableBy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "distance": {
+            "type": "number",
+            "example": 5.2,
+            "description": "Distance in miles from the user"
+          },
+          "isSubscribable": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "thumbnail",
+          "name",
+          "sellerName",
+          "sellerId",
+          "price",
+          "amount",
+          "availableBy",
+          "distance",
+          "isSubscribable"
+        ]
+      },
+      "ProduceOrderListResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/components/schemas/ResourceId"
+            },
+            "status": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/OrderStatus"
+                },
+                {
+                  "nullable": true
+                }
+              ]
+            },
+            "fulfillmentType": {
+              "$ref": "#/components/schemas/FulfillmentType"
+            },
+            "scheduledTime": {
+              "$ref": "#/components/schemas/IsoDate"
+            },
+            "totalAmount": {
+              "type": "string",
+              "example": "25.00"
+            },
+            "quantityOz": {
+              "type": "string",
+              "example": "32.0"
+            },
+            "createdAt": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/IsoDateTime"
+                },
+                {
+                  "nullable": true
+                }
+              ]
+            },
+            "buyer": {
+              "$ref": "#/components/schemas/ProduceOrderBuyer"
+            }
+          },
+          "required": [
+            "id",
+            "status",
+            "fulfillmentType",
+            "scheduledTime",
+            "totalAmount",
+            "quantityOz",
+            "createdAt",
+            "buyer"
+          ]
+        }
+      },
+      "ProduceOrderBuyer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "John Doe"
+          },
+          "image": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "image"
+        ]
+      },
+      "SellerMapGroupList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SellerMapGroup"
+        }
+      },
+      "SellerMapGroup": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "lat": {
+            "type": "number",
+            "example": 43.0731
+          },
+          "lng": {
+            "type": "number",
+            "example": -89.4012
+          },
+          "produce": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProduceMapItem"
+            },
+            "description": "List of produce items available at this specific map location"
+          }
+        },
+        "required": [
+          "sellerId",
+          "lat",
+          "lng",
+          "produce"
+        ]
+      },
+      "ProduceMapItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "name": {
+            "type": "string",
+            "example": "Kale"
+          },
+          "thumbnail": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "thumbnail"
+        ]
+      },
+      "Produce": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sellerId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "produceType": {
+            "type": "string",
+            "nullable": true
+          },
+          "pricePerOz": {
+            "type": "string"
+          },
+          "totalOzInventory": {
+            "type": "string"
+          },
+          "availableBy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "harvestFrequencyDays": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "seasonStart": {
+            "type": "string"
+          },
+          "seasonEnd": {
+            "type": "string"
+          },
+          "images": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "nullable": true
+              },
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "nullable": true
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "nullable": true
+                }
+              }
+            ]
+          },
+          "isSubscribable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "active",
+              "paused",
+              "deleted",
+              null
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "sellerId",
+          "title",
+          "produceType",
+          "pricePerOz",
+          "totalOzInventory",
+          "availableBy",
+          "harvestFrequencyDays",
+          "seasonStart",
+          "seasonEnd",
+          "images",
+          "isSubscribable",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "buyerId": {
+            "type": "string"
+          },
+          "sellerId": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "card",
+              "snap"
+            ]
+          },
+          "fulfillmentType": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "scheduledTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "pending",
+              "completed",
+              "canceled",
+              null
+            ]
+          },
+          "cancelReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalAmount": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "buyerId",
+          "sellerId",
+          "paymentMethod",
+          "fulfillmentType",
+          "scheduledTime",
+          "status",
+          "cancelReason",
+          "totalAmount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "OrdersList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Order"
+        }
+      },
+      "CancelOrderPayload": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Changed my mind",
+            "description": "The reason for canceling the order"
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "RescheduleOrderPayload": {
+        "type": "object",
+        "properties": {
+          "newTime": {
+            "$ref": "#/components/schemas/IsoDateTime"
+          }
+        },
+        "required": [
+          "newTime"
+        ]
+      },
+      "GetOrdersQuery": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "buyer",
+              "seller"
+            ],
+            "description": "The perspective from which to fetch orders",
+            "example": "buyer"
+          },
+          "status": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "timeframe": {
+            "type": "string",
+            "description": "Optional timeframe filter (e.g., \"7d\", \"30d\", or ISO range)",
+            "example": "recent"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
       "User": {
         "type": "object",
         "properties": {
@@ -118,168 +928,11 @@
           "updatedAt"
         ]
       },
-      "UpdateUserPayload": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Alex Farmer",
-            "description": "The user’s display name"
-          },
-          "aboutMe": {
-            "type": "string",
-            "example": "Growing organic berries since 2010.",
-            "description": "A brief bio or description of the farm/user"
-          },
-          "specialties": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": [
-              "Berries",
-              "Root Vegetables"
-            ],
-            "description": "List of product categories the user specializes in"
-          },
-          "goal": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "The monthly earnings goal for the seller"
-          },
-          "address": {
-            "type": "string",
-            "minLength": 5,
-            "example": "123 Farm Lane, Springfield, OR 97477",
-            "description": "Full physical street address"
-          },
-          "city": {
-            "type": "string",
-            "example": "Madison"
-          },
-          "lat": {
-            "type": "number",
-            "nullable": true,
-            "minimum": -90,
-            "maximum": 90,
-            "example": 37.7749,
-            "description": "Latitude coordinate"
-          },
-          "lng": {
-            "type": "number",
-            "nullable": true,
-            "minimum": -180,
-            "maximum": 180,
-            "example": -122.4194,
-            "description": "Longitude coordinate"
-          },
-          "deliveryRangeMiles": {
-            "type": "number",
-            "example": 25,
-            "description": "Maximum distance the seller is willing to travel for deliveries"
-          }
-        }
-      },
-      "RegisterFcmTokenPayload": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "example": "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZjt4Z6...",
-            "description": "The unique Firebase Cloud Messaging token for the device"
-          },
-          "platform": {
-            "type": "string",
-            "enum": [
-              "ios",
-              "android",
-              "web"
-            ],
-            "example": "ios",
-            "description": "The operating system of the device registering the token"
-          }
-        },
-        "required": [
-          "token",
-          "platform"
-        ]
-      },
-      "UpdateScheduleRulesPayload": {
-        "type": "object",
-        "properties": {
-          "pickupWindows": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "day": {
-                  "type": "string",
-                  "example": "Monday",
-                  "description": "The day of the week for this availability window"
-                },
-                "start": {
-                  "type": "string",
-                  "example": "09:00",
-                  "description": "Opening time in 24-hour format (HH:mm)"
-                },
-                "end": {
-                  "type": "string",
-                  "example": "17:00",
-                  "description": "Closing time in 24-hour format (HH:mm)"
-                }
-              },
-              "required": [
-                "day",
-                "start",
-                "end"
-              ]
-            },
-            "description": "Set of time windows when buyers can pick up orders"
-          },
-          "deliveryWindows": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "day": {
-                  "type": "string",
-                  "example": "Monday",
-                  "description": "The day of the week for this availability window"
-                },
-                "start": {
-                  "type": "string",
-                  "example": "09:00",
-                  "description": "Opening time in 24-hour format (HH:mm)"
-                },
-                "end": {
-                  "type": "string",
-                  "example": "17:00",
-                  "description": "Closing time in 24-hour format (HH:mm)"
-                }
-              },
-              "required": [
-                "day",
-                "start",
-                "end"
-              ]
-            },
-            "description": "Set of time windows when the seller performs deliveries"
-          }
-        },
-        "required": [
-          "pickupWindows",
-          "deliveryWindows"
-        ]
-      },
       "PublicUserProfile": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "example": "user_123456789",
-            "description": "The unique identifier for the user, prefixed with \"user_\""
+            "$ref": "#/components/schemas/UserId"
           },
           "name": {
             "type": "string",
@@ -287,11 +940,14 @@
             "example": "Green Acres"
           },
           "image": {
-            "type": "string",
-            "nullable": true,
-            "format": "uri",
-            "example": "https://assets.example.com/produce/apples.jpg",
-            "description": "A fully qualified URL to an image asset"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
+              },
+              {
+                "nullable": true
+              }
+            ]
           },
           "aboutMe": {
             "type": "string",
@@ -340,32 +996,7 @@
             "example": 124
           },
           "reviewBreakdown": {
-            "type": "object",
-            "properties": {
-              "1": {
-                "type": "number"
-              },
-              "2": {
-                "type": "number"
-              },
-              "3": {
-                "type": "number"
-              },
-              "4": {
-                "type": "number"
-              },
-              "5": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "1",
-              "2",
-              "3",
-              "4",
-              "5"
-            ],
-            "description": "Count of reviews for each star level"
+            "$ref": "#/components/schemas/ReviewBreakdown"
           },
           "activeBuyerCount": {
             "type": "number",
@@ -387,527 +1018,169 @@
           "activeBuyerCount"
         ]
       },
-      "SellerMapGroupList": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "sellerId": {
-              "type": "string",
-              "example": "user_123456789",
-              "description": "The unique identifier for the user, prefixed with \"user_\""
-            },
-            "lat": {
-              "type": "number",
-              "example": 43.0731
-            },
-            "lng": {
-              "type": "number",
-              "example": -89.4012
-            },
-            "produce": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "example": "123e4567-e89b-12d3-a456-426614174000",
-                    "description": "The standard UUID identifier for the resource"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "Kale"
-                  },
-                  "thumbnail": {
-                    "type": "string",
-                    "nullable": true,
-                    "format": "uri",
-                    "example": "https://assets.example.com/produce/apples.jpg",
-                    "description": "A fully qualified URL to an image asset"
-                  }
-                },
-                "required": [
-                  "id",
-                  "name",
-                  "thumbnail"
-                ]
-              },
-              "description": "List of produce items available at this specific map location"
-            }
-          },
-          "required": [
-            "sellerId",
-            "lat",
-            "lng",
-            "produce"
-          ]
-        }
-      },
-      "ProduceListResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000",
-              "description": "The standard UUID identifier for the resource"
-            },
-            "thumbnail": {
-              "type": "string",
-              "nullable": true,
-              "format": "uri",
-              "example": "https://assets.example.com/produce/apples.jpg",
-              "description": "A fully qualified URL to an image asset"
-            },
-            "name": {
-              "type": "string",
-              "example": "Honeycrisp Apples"
-            },
-            "sellerName": {
-              "type": "string",
-              "nullable": true,
-              "example": "Smith Family Farm"
-            },
-            "sellerId": {
-              "type": "string",
-              "example": "user_123456789",
-              "description": "The unique identifier for the user, prefixed with \"user_\""
-            },
-            "price": {
-              "type": "string",
-              "example": "4.50",
-              "description": "Formatted price string"
-            },
-            "amount": {
-              "type": "string",
-              "example": "16oz",
-              "description": "Formatted weight/quantity string"
-            },
-            "availableBy": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "distance": {
-              "type": "number",
-              "example": 5.2,
-              "description": "Distance in miles from the user"
-            },
-            "isSubscribable": {
-              "type": "boolean",
-              "nullable": true
-            }
-          },
-          "required": [
-            "id",
-            "thumbnail",
-            "name",
-            "sellerName",
-            "sellerId",
-            "price",
-            "amount",
-            "availableBy",
-            "distance",
-            "isSubscribable"
-          ]
-        }
-      },
-      "CreateProducePayload": {
+      "ReviewBreakdown": {
         "type": "object",
         "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "example": "Organic Honeycrisp Apples",
-            "description": "The public title of the produce listing"
+          "1": {
+            "type": "number"
           },
-          "produceType": {
-            "type": "string",
-            "example": "fruit",
-            "description": "Category of the produce (e.g., vegetable, fruit, herb)"
+          "2": {
+            "type": "number"
           },
-          "pricePerOz": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
+          "3": {
+            "type": "number"
           },
-          "totalOzInventory": {
-            "type": "number",
-            "minimum": 0,
-            "example": 16,
-            "description": "Weight in ounces (oz)"
+          "4": {
+            "type": "number"
           },
-          "availableBy": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time",
-            "example": "2026-03-25T10:00:00Z",
-            "description": "The date and time when the produce will be ready for pickup or delivery"
-          },
-          "harvestFrequencyDays": {
-            "type": "integer",
-            "minimum": 0,
-            "example": 7,
-            "description": "How often this item is typically harvested, in days"
-          },
-          "seasonStart": {
-            "type": "string",
-            "format": "date",
-            "example": "2026-03-27",
-            "description": "ISO 8601 calendar date (YYYY-MM-DD)"
-          },
-          "seasonEnd": {
-            "type": "string",
-            "format": "date",
-            "example": "2026-03-27",
-            "description": "ISO 8601 calendar date (YYYY-MM-DD)"
-          },
-          "images": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri",
-              "example": "https://assets.example.com/produce/apples.jpg",
-              "description": "A fully qualified URL to an image asset"
-            },
-            "default": [],
-            "example": [
-              "https://example.com/apple.jpg"
-            ],
-            "description": "List of gallery images for the product"
-          },
-          "isSubscribable": {
-            "type": "boolean",
-            "default": false,
-            "example": true,
-            "description": "Whether customers can set up recurring orders for this item"
+          "5": {
+            "type": "number"
           }
         },
         "required": [
-          "title",
-          "pricePerOz",
-          "totalOzInventory",
-          "harvestFrequencyDays",
-          "seasonStart",
-          "seasonEnd"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "description": "Count of reviews for each star level"
+      },
+      "AvailabilityWindow": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "example": "Monday",
+            "description": "The day of the week for this availability window"
+          },
+          "start": {
+            "type": "string",
+            "example": "09:00",
+            "description": "Opening time in 24-hour format (HH:mm)"
+          },
+          "end": {
+            "type": "string",
+            "example": "17:00",
+            "description": "Closing time in 24-hour format (HH:mm)"
+          }
+        },
+        "required": [
+          "day",
+          "start",
+          "end"
         ]
       },
-      "UpdateProducePayload": {
+      "UpdateUserPayload": {
         "type": "object",
         "properties": {
-          "title": {
+          "name": {
             "type": "string",
-            "minLength": 1,
-            "example": "Organic Honeycrisp Apples",
-            "description": "The public title of the produce listing"
+            "example": "Alex Farmer",
+            "description": "The user’s display name"
           },
-          "produceType": {
+          "aboutMe": {
             "type": "string",
-            "example": "fruit",
-            "description": "Category of the produce (e.g., vegetable, fruit, herb)"
+            "example": "Growing organic berries since 2010.",
+            "description": "A brief bio or description of the farm/user"
           },
-          "pricePerOz": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
-          },
-          "totalOzInventory": {
-            "type": "number",
-            "minimum": 0,
-            "example": 16,
-            "description": "Weight in ounces (oz)"
-          },
-          "availableBy": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time",
-            "example": "2026-03-25T10:00:00Z",
-            "description": "The date and time when the produce will be ready for pickup or delivery"
-          },
-          "harvestFrequencyDays": {
-            "type": "integer",
-            "minimum": 0,
-            "example": 7,
-            "description": "How often this item is typically harvested, in days"
-          },
-          "seasonStart": {
-            "type": "string",
-            "format": "date",
-            "example": "2026-03-27",
-            "description": "ISO 8601 calendar date (YYYY-MM-DD)"
-          },
-          "seasonEnd": {
-            "type": "string",
-            "format": "date",
-            "example": "2026-03-27",
-            "description": "ISO 8601 calendar date (YYYY-MM-DD)"
-          },
-          "images": {
+          "specialties": {
             "type": "array",
             "items": {
-              "type": "string",
-              "format": "uri",
-              "example": "https://assets.example.com/produce/apples.jpg",
-              "description": "A fully qualified URL to an image asset"
+              "type": "string"
             },
             "example": [
-              "https://example.com/apple.jpg"
+              "Berries",
+              "Root Vegetables"
             ],
-            "description": "List of gallery images for the product"
+            "description": "List of product categories the user specializes in"
           },
-          "isSubscribable": {
-            "type": "boolean",
-            "example": true,
-            "description": "Whether customers can set up recurring orders for this item"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "paused",
-              "deleted"
-            ],
-            "example": "active",
-            "description": "The status of the produce listing"
-          }
-        }
-      },
-      "ProduceOrderListResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000",
-              "description": "The standard UUID identifier for the resource"
-            },
-            "status": {
-              "type": "string",
-              "nullable": true,
-              "enum": [
-                "pending",
-                "completed",
-                "canceled",
-                null
-              ],
-              "example": "pending",
-              "description": "The lifecycle status of the order"
-            },
-            "fulfillmentType": {
-              "type": "string",
-              "enum": [
-                "pickup",
-                "delivery"
-              ],
-              "example": "delivery",
-              "description": "The fulfillment type for completing an order"
-            },
-            "scheduledTime": {
-              "type": "string",
-              "format": "date",
-              "example": "2026-03-27",
-              "description": "ISO 8601 calendar date (YYYY-MM-DD)"
-            },
-            "totalAmount": {
-              "type": "string",
-              "example": "25.00"
-            },
-            "quantityOz": {
-              "type": "string",
-              "example": "32.0"
-            },
-            "createdAt": {
-              "type": "string",
-              "nullable": true,
-              "format": "date-time",
-              "example": "2026-03-27T09:00:00Z",
-              "description": "ISO 8601 UTC timestamp"
-            },
-            "buyer": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "example": "user_123456789",
-                  "description": "The unique identifier for the user, prefixed with \"user_\""
-                },
-                "name": {
-                  "type": "string",
-                  "nullable": true,
-                  "example": "John Doe"
-                },
-                "image": {
-                  "type": "string",
-                  "nullable": true,
-                  "format": "uri",
-                  "example": "https://assets.example.com/produce/apples.jpg",
-                  "description": "A fully qualified URL to an image asset"
-                }
-              },
-              "required": [
-                "id",
-                "name",
-                "image"
-              ]
-            }
-          },
-          "required": [
-            "id",
-            "status",
-            "fulfillmentType",
-            "scheduledTime",
-            "totalAmount",
-            "quantityOz",
-            "createdAt",
-            "buyer"
-          ]
-        }
-      },
-      "ProduceResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Produce"
-        }
-      },
-      "Produce": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sellerId": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "produceType": {
-            "type": "string",
-            "nullable": true
-          },
-          "pricePerOz": {
-            "type": "string"
-          },
-          "totalOzInventory": {
-            "type": "string"
-          },
-          "availableBy": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "harvestFrequencyDays": {
-            "type": "integer",
-            "minimum": -2147483648,
-            "maximum": 2147483647
-          },
-          "seasonStart": {
-            "type": "string"
-          },
-          "seasonEnd": {
-            "type": "string"
-          },
-          "images": {
-            "anyOf": [
+          "goal": {
+            "allOf": [
               {
-                "type": "string"
+                "$ref": "#/components/schemas/PriceDollars"
               },
               {
-                "type": "number"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "nullable": true
-              },
-              {
-                "type": "object",
-                "additionalProperties": {
-                  "nullable": true
-                }
-              },
-              {
-                "type": "array",
-                "items": {
-                  "nullable": true
-                }
+                "description": "The monthly earnings goal for the seller"
               }
             ]
           },
-          "isSubscribable": {
-            "type": "boolean",
-            "nullable": true
+          "address": {
+            "$ref": "#/components/schemas/Address"
           },
-          "status": {
+          "city": {
             "type": "string",
-            "nullable": true,
-            "enum": [
-              "active",
-              "paused",
-              "deleted",
-              null
-            ]
+            "example": "Madison"
           },
-          "createdAt": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time"
+          "lat": {
+            "$ref": "#/components/schemas/Latitude"
           },
-          "updatedAt": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time"
+          "lng": {
+            "$ref": "#/components/schemas/Longitude"
+          },
+          "deliveryRangeMiles": {
+            "type": "number",
+            "example": 25,
+            "description": "Maximum distance the seller is willing to travel for deliveries"
           }
-        },
-        "required": [
-          "id",
-          "sellerId",
-          "title",
-          "produceType",
-          "pricePerOz",
-          "totalOzInventory",
-          "availableBy",
-          "harvestFrequencyDays",
-          "seasonStart",
-          "seasonEnd",
-          "images",
-          "isSubscribable",
-          "status",
-          "createdAt",
-          "updatedAt"
-        ]
+        }
       },
-      "InitiateSnapCheckoutPayload": {
+      "UpdateScheduleRulesPayload": {
         "type": "object",
         "properties": {
-          "sellerId": {
-            "type": "string",
-            "example": "user_123456789",
-            "description": "The unique identifier for the user, prefixed with \"user_\""
+          "pickupWindows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityWindow"
+            },
+            "description": "Set of time windows when buyers can pick up orders"
           },
-          "fulfillmentType": {
-            "type": "string",
-            "enum": [
-              "pickup",
-              "delivery"
-            ],
-            "example": "delivery",
-            "description": "The fulfillment type for completing an order"
+          "deliveryWindows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityWindow"
+            },
+            "description": "Set of time windows when the seller performs deliveries"
           }
         },
         "required": [
-          "sellerId",
-          "fulfillmentType"
+          "pickupWindows",
+          "deliveryWindows"
+        ]
+      },
+      "RegisterFcmTokenPayload": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZjt4Z6...",
+            "description": "The unique Firebase Cloud Messaging token for the device"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android",
+              "web"
+            ],
+            "example": "ios",
+            "description": "The operating system of the device registering the token"
+          }
+        },
+        "required": [
+          "token",
+          "platform"
+        ]
+      },
+      "UpdateSubscriptionStatusPayload": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          }
+        },
+        "required": [
+          "status"
         ]
       },
       "StripeOnboardingResponse": {
@@ -924,90 +1197,335 @@
           "url"
         ]
       },
-      "OrdersList": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Order"
-        }
+      "ContactPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Jane Doe",
+            "description": "Full name of the person submitting the inquiry"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jane@example.com",
+            "description": "Contact email address"
+          },
+          "company": {
+            "type": "string",
+            "example": "Fresh Eats LLC",
+            "description": "Optional company or organization name"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "example": "I am interested in bulk purchasing.",
+            "description": "The content of the contact request"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "message"
+        ]
       },
-      "Order": {
+      "AddToCartPayload": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "quantityOz": {
+            "$ref": "#/components/schemas/WeightOz"
+          },
+          "isSubscription": {
+            "type": "boolean",
+            "default": false,
+            "example": false,
+            "description": "Whether this item should be added as a recurring subscription"
+          }
+        },
+        "required": [
+          "productId",
+          "quantityOz"
+        ]
+      },
+      "CartItem": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string",
+            "example": "Heirloom Tomatoes",
+            "description": "Display title of the product"
+          },
+          "pricePerOz": {
+            "type": "string",
+            "example": "0.50",
+            "description": "Price per ounce formatted as a string"
+          },
+          "quantityOz": {
+            "type": "string",
+            "example": "16.0",
+            "description": "Quantity in ounces currently in cart"
+          },
+          "isSubscription": {
+            "type": "boolean",
+            "nullable": true,
+            "example": false,
+            "description": "Flag indicating if this is a subscription item"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/IsoDateTime"
+          },
+          "images": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ImageUrl"
+            }
+          }
+        },
+        "required": [
+          "reservationId",
+          "productId",
+          "title",
+          "pricePerOz",
+          "quantityOz",
+          "isSubscription",
+          "expiresAt",
+          "images"
+        ]
+      },
+      "CartSeller": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "$ref": "#/components/schemas/UserId"
           },
-          "buyerId": {
-            "type": "string"
-          },
-          "sellerId": {
-            "type": "string"
-          },
-          "paymentMethod": {
-            "type": "string",
-            "enum": [
-              "card",
-              "snap"
-            ]
-          },
-          "fulfillmentType": {
-            "type": "string",
-            "enum": [
-              "pickup",
-              "delivery"
-            ]
-          },
-          "scheduledTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
+          "name": {
             "type": "string",
             "nullable": true,
-            "enum": [
-              "pending",
-              "completed",
-              "canceled",
-              null
-            ]
-          },
-          "cancelReason": {
-            "type": "string",
-            "nullable": true
-          },
-          "totalAmount": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "example": "Sun-Kissed Orchards",
+            "description": "The name of the seller providing these items"
           }
         },
         "required": [
           "id",
-          "buyerId",
-          "sellerId",
-          "paymentMethod",
-          "fulfillmentType",
-          "scheduledTime",
-          "status",
-          "cancelReason",
-          "totalAmount",
-          "createdAt",
-          "updatedAt"
+          "name"
         ]
       },
-      "ConversationsResponse": {
+      "CartSellerGroup": {
+        "type": "object",
+        "properties": {
+          "seller": {
+            "$ref": "#/components/schemas/CartSeller"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            },
+            "description": "List of items in the cart belonging to this specific seller"
+          }
+        },
+        "required": [
+          "seller",
+          "items"
+        ]
+      },
+      "GetCartResponse": {
+        "type": "object",
+        "properties": {
+          "cart": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartSellerGroup"
+            },
+            "description": "User shopping cart grouped by seller"
+          }
+        },
+        "required": [
+          "cart"
+        ]
+      },
+      "CreateCheckoutSessionPayload": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "fulfillmentType": {
+            "$ref": "#/components/schemas/FulfillmentType"
+          },
+          "scheduledTime": {
+            "$ref": "#/components/schemas/IsoDateTime"
+          }
+        },
+        "required": [
+          "sellerId",
+          "fulfillmentType",
+          "scheduledTime"
+        ]
+      },
+      "CheckoutSessionResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://checkout.stripe.com/c/pay/cs_test_12345",
+            "description": "The URL to redirect the user to for Stripe Checkout."
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "InitiateSnapCheckoutPayload": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "fulfillmentType": {
+            "$ref": "#/components/schemas/FulfillmentType"
+          }
+        },
+        "required": [
+          "sellerId",
+          "fulfillmentType"
+        ]
+      },
+      "AvailabilityResponse": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Conversation"
-        }
+          "type": "string"
+        },
+        "example": [
+          "09:00",
+          "10:30",
+          "14:00"
+        ],
+        "description": "An array of available time slots"
+      },
+      "CreateReviewPayload": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "orderId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 5,
+            "description": "Star rating from 1 to 5"
+          },
+          "comment": {
+            "type": "string",
+            "example": "The apples were incredibly crisp and sweet!",
+            "description": "Optional text review from the buyer"
+          }
+        },
+        "required": [
+          "sellerId",
+          "orderId",
+          "rating"
+        ]
+      },
+      "ReviewBuyer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "Alex River"
+          },
+          "image": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "image"
+        ]
+      },
+      "SellerReviewItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "rating": {
+            "type": "number",
+            "example": 4
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true,
+            "example": "Great produce, slightly late delivery."
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/IsoDateTime"
+          },
+          "buyer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReviewBuyer"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "rating",
+          "comment",
+          "createdAt",
+          "buyer"
+        ]
+      },
+      "PaginatedReviewsResponse": {
+        "type": "object",
+        "properties": {
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SellerReviewItem"
+            },
+            "description": "List of reviews for the seller"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "reviews",
+          "pagination"
+        ]
       },
       "Conversation": {
         "type": "object",
@@ -1030,12 +1548,6 @@
           "id",
           "updatedAt"
         ]
-      },
-      "MessagesResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Message"
-        }
       },
       "Message": {
         "type": "object",
@@ -1065,7 +1577,7 @@
           "createdAt"
         ]
       },
-      "SendMessageRequest": {
+      "SendMessagePayload": {
         "type": "object",
         "properties": {
           "conversationId": {
@@ -1083,92 +1595,263 @@
           "text"
         ]
       },
+      "ConversationsResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Conversation"
+        }
+      },
+      "MessagesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Message"
+        }
+      },
+      "Grower": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "Green Valley Farm",
+            "description": "The display name of the grower"
+          },
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "produceTypesOrdered": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "spinach",
+              "carrots"
+            ],
+            "description": "List of produce categories previously purchased from this grower"
+          },
+          "amountOrderedThisMonthLbs": {
+            "type": "number",
+            "example": 12.5,
+            "description": "Total weight of produce ordered from this grower in the current month"
+          },
+          "daysSinceFirstOrder": {
+            "type": "number",
+            "example": 45,
+            "description": "Number of days since the first transaction with this grower"
+          },
+          "firstOrderDate": {
+            "$ref": "#/components/schemas/IsoDateTime"
+          }
+        },
+        "required": [
+          "sellerId",
+          "name",
+          "address",
+          "produceTypesOrdered",
+          "amountOrderedThisMonthLbs",
+          "daysSinceFirstOrder",
+          "firstOrderDate"
+        ]
+      },
+      "GrowersResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Grower"
+        }
+      },
+      "BillingSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "totalSpent": {
+            "type": "number",
+            "example": 450.75,
+            "description": "Lifetime total spent"
+          },
+          "totalProduceLbs": {
+            "type": "number",
+            "example": 60.5,
+            "description": "Lifetime total produce ordered in pounds"
+          },
+          "avgCostPerLb": {
+            "type": "number",
+            "example": 7.45,
+            "description": "Average cost per pound across all orders"
+          },
+          "localSourcingPercentage": {
+            "type": "number",
+            "example": 75,
+            "description": "Percentage of orders from sellers in the same city"
+          }
+        },
+        "required": [
+          "totalSpent",
+          "totalProduceLbs",
+          "avgCostPerLb",
+          "localSourcingPercentage"
+        ]
+      },
+      "ActiveSubscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "produceName": {
+            "type": "string",
+            "example": "Organic Apples",
+            "description": "Name of the recurring produce item"
+          },
+          "amount": {
+            "type": "number",
+            "example": 10.5,
+            "description": "Subscription amount in Lbs"
+          }
+        },
+        "required": [
+          "id",
+          "produceName",
+          "amount"
+        ]
+      },
+      "BuyerDashboardResponse": {
+        "type": "object",
+        "properties": {
+          "onOrderThisWeekLbs": {
+            "type": "number",
+            "example": 25.4,
+            "description": "Total weight of produce scheduled for delivery this week"
+          },
+          "percentChangeFromLastWeek": {
+            "type": "number",
+            "example": 12.5,
+            "description": "Percentage change in order volume compared to the previous week"
+          },
+          "totalSpendThisMonth": {
+            "$ref": "#/components/schemas/PriceDollars"
+          },
+          "totalSpendLastMonth": {
+            "$ref": "#/components/schemas/PriceDollars"
+          },
+          "activeSubscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActiveSubscription"
+            },
+            "description": "List of currently active recurring orders"
+          },
+          "localGrowersSupplying": {
+            "type": "number",
+            "example": 3,
+            "description": "Count of local growers currently fulfilling orders"
+          },
+          "furthestGrowerDistanceMiles": {
+            "type": "number",
+            "example": 45.2,
+            "description": "Distance in miles to the most distant supplier"
+          },
+          "avgGrowerDistanceMiles": {
+            "type": "number",
+            "example": 18.4,
+            "description": "Mean distance in miles across all active suppliers"
+          }
+        },
+        "required": [
+          "onOrderThisWeekLbs",
+          "percentChangeFromLastWeek",
+          "totalSpendThisMonth",
+          "totalSpendLastMonth",
+          "activeSubscriptions",
+          "localGrowersSupplying",
+          "furthestGrowerDistanceMiles",
+          "avgGrowerDistanceMiles"
+        ]
+      },
+      "Payout": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/IsoDateTime"
+          },
+          "buyerName": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "Name of the buyer associated with this transaction"
+          },
+          "productName": {
+            "type": "string",
+            "example": "Organic Honey crisp Apples",
+            "description": "Name of the product sold"
+          },
+          "quantityLbs": {
+            "type": "number",
+            "example": 15.5,
+            "description": "The quantity sold in pounds (lbs)"
+          },
+          "amountDollars": {
+            "$ref": "#/components/schemas/PriceDollars"
+          }
+        },
+        "required": [
+          "date",
+          "buyerName",
+          "productName",
+          "quantityLbs",
+          "amountDollars"
+        ]
+      },
       "PayoutHistory": {
         "type": "array",
         "items": {
-          "type": "object",
-          "properties": {
-            "date": {
-              "type": "string",
-              "format": "date-time",
-              "example": "2026-03-27T09:00:00Z",
-              "description": "ISO 8601 UTC timestamp"
-            },
-            "buyerName": {
-              "type": "string",
-              "example": "John Doe",
-              "description": "Name of the buyer associated with this transaction"
-            },
-            "productName": {
-              "type": "string",
-              "example": "Organic Honey crisp Apples",
-              "description": "Name of the product sold"
-            },
-            "quantityLbs": {
-              "type": "number",
-              "example": 15.5,
-              "description": "The quantity sold in pounds (lbs)"
-            },
-            "amountDollars": {
-              "type": "number",
-              "minimum": 0,
-              "exclusiveMinimum": true,
-              "example": 12.5,
-              "description": "Price/Amount in USD"
-            }
-          },
-          "required": [
-            "date",
-            "buyerName",
-            "productName",
-            "quantityLbs",
-            "amountDollars"
-          ]
+          "$ref": "#/components/schemas/Payout"
         }
+      },
+      "ProduceSales": {
+        "type": "object",
+        "properties": {
+          "produceName": {
+            "type": "string",
+            "example": "Organic Apples"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PriceDollars"
+          }
+        },
+        "required": [
+          "produceName",
+          "amount"
+        ]
       },
       "SellerEarningsResponse": {
         "type": "object",
         "properties": {
           "earnedThisMonth": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
+            "$ref": "#/components/schemas/PriceDollars"
           },
           "earnedLastMonth": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
+            "$ref": "#/components/schemas/PriceDollars"
           },
           "remainingToGoal": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
+            "$ref": "#/components/schemas/PriceDollars"
           },
           "monthlyGoal": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
+            "$ref": "#/components/schemas/PriceDollars"
           },
           "totalEarnedYTD": {
-            "type": "number",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "example": 12.5,
-            "description": "Price/Amount in USD"
+            "$ref": "#/components/schemas/PriceDollars"
           },
           "ytdStartDate": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2026-03-27T09:00:00Z",
-            "description": "ISO 8601 UTC timestamp"
+            "$ref": "#/components/schemas/IsoDateTime"
           },
           "avgPerLbSold": {
             "type": "number",
@@ -1178,24 +1861,7 @@
           "amountSoldDollarsPerProduceThisMonth": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "produceName": {
-                  "type": "string",
-                  "example": "Organic Apples"
-                },
-                "amount": {
-                  "type": "number",
-                  "minimum": 0,
-                  "exclusiveMinimum": true,
-                  "example": 12.5,
-                  "description": "Price/Amount in USD"
-                }
-              },
-              "required": [
-                "produceName",
-                "amount"
-              ]
+              "$ref": "#/components/schemas/ProduceSales"
             },
             "description": "Breakdown of sales revenue by individual produce type"
           }
@@ -1209,6 +1875,24 @@
           "ytdStartDate",
           "avgPerLbSold",
           "amountSoldDollarsPerProduceThisMonth"
+        ]
+      },
+      "EarningsByProduce": {
+        "type": "object",
+        "properties": {
+          "produceName": {
+            "type": "string",
+            "example": "Tomatoes"
+          },
+          "earned": {
+            "type": "number",
+            "example": 50,
+            "description": "Total dollars earned for this produce item"
+          }
+        },
+        "required": [
+          "produceName",
+          "earned"
         ]
       },
       "SellerDashboardResponse": {
@@ -1252,50 +1936,11 @@
           "earningsByProduceThisMonth": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "produceName": {
-                  "type": "string",
-                  "example": "Tomatoes"
-                },
-                "earned": {
-                  "type": "number",
-                  "example": 50,
-                  "description": "Total dollars earned for this produce item"
-                }
-              },
-              "required": [
-                "produceName",
-                "earned"
-              ]
+              "$ref": "#/components/schemas/EarningsByProduce"
             }
           },
           "sellerLocation": {
-            "type": "object",
-            "properties": {
-              "lat": {
-                "type": "number",
-                "nullable": true,
-                "example": 37.7749
-              },
-              "lng": {
-                "type": "number",
-                "nullable": true,
-                "example": -122.4194
-              },
-              "address": {
-                "type": "string",
-                "nullable": true,
-                "minLength": 5,
-                "example": "123 Farm Lane, Springfield, OR 97477",
-                "description": "Full physical street address"
-              }
-            },
-            "required": [
-              "lat",
-              "lng",
-              "address"
-            ]
+            "$ref": "#/components/schemas/Location"
           }
         },
         "required": [
@@ -1310,38 +1955,11 @@
           "sellerLocation"
         ]
       },
-      "CreateReview": {
-        "type": "object",
-        "properties": {
-          "sellerId": {
-            "type": "string",
-            "example": "user_123456789",
-            "description": "The unique identifier for the user, prefixed with \"user_\""
-          },
-          "orderId": {
-            "type": "string",
-            "format": "uuid",
-            "example": "123e4567-e89b-12d3-a456-426614174000",
-            "description": "The standard UUID identifier for the resource"
-          },
-          "rating": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 5,
-            "example": 5,
-            "description": "Star rating from 1 to 5"
-          },
-          "comment": {
-            "type": "string",
-            "example": "The apples were incredibly crisp and sweet!",
-            "description": "Optional text review from the buyer"
-          }
-        },
-        "required": [
-          "sellerId",
-          "orderId",
-          "rating"
-        ]
+      "ProduceResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Produce"
+        }
       }
     },
     "parameters": {}
@@ -1370,15 +1988,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1388,15 +1998,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1424,15 +2026,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -1442,15 +2036,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1460,15 +2046,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1498,15 +2076,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -1516,15 +2086,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1534,15 +2096,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1572,15 +2126,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -1590,15 +2136,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1608,15 +2146,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1634,9 +2164,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "example": "user_123456789",
-              "description": "The unique identifier for the user, prefixed with \"user_\""
+              "$ref": "#/components/schemas/UserId"
             },
             "required": true,
             "description": "The unique identifier for the user, prefixed with \"user_\"",
@@ -1709,106 +2237,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "reviews": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "example": "123e4567-e89b-12d3-a456-426614174000",
-                            "description": "The standard UUID identifier for the resource"
-                          },
-                          "rating": {
-                            "type": "number",
-                            "example": 4
-                          },
-                          "comment": {
-                            "type": "string",
-                            "nullable": true,
-                            "example": "Great produce, slightly late delivery."
-                          },
-                          "createdAt": {
-                            "type": "string",
-                            "format": "date-time",
-                            "example": "2026-03-27T09:00:00Z",
-                            "description": "ISO 8601 UTC timestamp"
-                          },
-                          "buyer": {
-                            "type": "object",
-                            "nullable": true,
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "example": "user_123456789",
-                                "description": "The unique identifier for the user, prefixed with \"user_\""
-                              },
-                              "name": {
-                                "type": "string",
-                                "nullable": true,
-                                "example": "Alex River"
-                              },
-                              "image": {
-                                "type": "string",
-                                "nullable": true,
-                                "format": "uri",
-                                "example": "https://assets.example.com/produce/apples.jpg",
-                                "description": "A fully qualified URL to an image asset"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name",
-                              "image"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "rating",
-                          "comment",
-                          "createdAt",
-                          "buyer"
-                        ]
-                      },
-                      "description": "List of reviews for the seller"
-                    },
-                    "pagination": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number",
-                          "example": 45,
-                          "description": "Total number of reviews available"
-                        },
-                        "page": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "limit": {
-                          "type": "number",
-                          "example": 10
-                        },
-                        "totalPages": {
-                          "type": "number",
-                          "example": 5
-                        }
-                      },
-                      "required": [
-                        "total",
-                        "page",
-                        "limit",
-                        "totalPages"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "reviews",
-                    "pagination"
-                  ]
+                  "$ref": "#/components/schemas/PaginatedReviewsResponse"
                 }
               }
             }
@@ -1826,9 +2255,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "example": "user_123456789",
-              "description": "The unique identifier for the user, prefixed with \"user_\""
+              "$ref": "#/components/schemas/UserId"
             },
             "required": true,
             "description": "The unique identifier for the user, prefixed with \"user_\"",
@@ -1852,15 +2279,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1878,12 +2297,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "minimum": -90,
-              "maximum": 90,
-              "example": 37.7749,
-              "description": "Latitude coordinate"
+              "$ref": "#/components/schemas/Latitude"
             },
             "required": false,
             "description": "Latitude coordinate",
@@ -1892,12 +2306,7 @@
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "minimum": -180,
-              "maximum": 180,
-              "example": -122.4194,
-              "description": "Longitude coordinate"
+              "$ref": "#/components/schemas/Longitude"
             },
             "required": false,
             "description": "Longitude coordinate",
@@ -1975,12 +2384,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "minimum": -90,
-              "maximum": 90,
-              "example": 37.7749,
-              "description": "Latitude coordinate"
+              "$ref": "#/components/schemas/Latitude"
             },
             "required": false,
             "description": "Latitude coordinate",
@@ -1989,12 +2393,7 @@
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "minimum": -180,
-              "maximum": 180,
-              "example": -122.4194,
-              "description": "Longitude coordinate"
+              "$ref": "#/components/schemas/Longitude"
             },
             "required": false,
             "description": "Longitude coordinate",
@@ -2089,21 +2488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "entityId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "example": "123e4567-e89b-12d3-a456-426614174000"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "entityId"
-                  ]
+                  "$ref": "#/components/schemas/SuccessWithEntity"
                 }
               }
             }
@@ -2113,15 +2498,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2139,9 +2516,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
+              "$ref": "#/components/schemas/EntityId"
             },
             "required": true,
             "name": "id",
@@ -2163,21 +2538,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "entityId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "example": "123e4567-e89b-12d3-a456-426614174000"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "entityId"
-                  ]
+                  "$ref": "#/components/schemas/SuccessWithEntity"
                 }
               }
             }
@@ -2187,15 +2548,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2205,15 +2558,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2223,15 +2568,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2247,9 +2584,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
+              "$ref": "#/components/schemas/EntityId"
             },
             "required": true,
             "name": "id",
@@ -2262,15 +2597,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -2280,15 +2607,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2298,15 +2617,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2316,15 +2627,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2342,9 +2645,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
+              "$ref": "#/components/schemas/EntityId"
             },
             "required": true,
             "name": "id",
@@ -2387,15 +2688,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2405,15 +2698,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2451,14 +2736,7 @@
           },
           {
             "schema": {
-              "type": "string",
-              "enum": [
-                "active",
-                "paused",
-                "deleted"
-              ],
-              "example": "active",
-              "description": "The status of the produce listing"
+              "$ref": "#/components/schemas/ProduceStatus"
             },
             "required": false,
             "description": "The status of the produce listing",
@@ -2482,15 +2760,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2511,113 +2781,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cart": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "seller": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "example": "user_123456789",
-                                "description": "The unique identifier for the user, prefixed with \"user_\""
-                              },
-                              "name": {
-                                "type": "string",
-                                "nullable": true,
-                                "example": "Sun-Kissed Orchards",
-                                "description": "The name of the seller providing these items"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          },
-                          "items": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "reservationId": {
-                                  "type": "string",
-                                  "format": "uuid",
-                                  "example": "123e4567-e89b-12d3-a456-426614174000",
-                                  "description": "The standard UUID identifier for the resource"
-                                },
-                                "productId": {
-                                  "type": "string",
-                                  "format": "uuid",
-                                  "example": "123e4567-e89b-12d3-a456-426614174000",
-                                  "description": "The standard UUID identifier for the resource"
-                                },
-                                "title": {
-                                  "type": "string",
-                                  "example": "Heirloom Tomatoes",
-                                  "description": "Display title of the product"
-                                },
-                                "pricePerOz": {
-                                  "type": "string",
-                                  "example": "0.50",
-                                  "description": "Price per ounce formatted as a string"
-                                },
-                                "quantityOz": {
-                                  "type": "string",
-                                  "example": "16.0",
-                                  "description": "Quantity in ounces currently in cart"
-                                },
-                                "isSubscription": {
-                                  "type": "boolean",
-                                  "nullable": true,
-                                  "example": false,
-                                  "description": "Flag indicating if this is a subscription item"
-                                },
-                                "expiresAt": {
-                                  "type": "string",
-                                  "format": "date-time",
-                                  "example": "2026-03-27T09:00:00Z",
-                                  "description": "ISO 8601 UTC timestamp"
-                                },
-                                "images": {
-                                  "type": "array",
-                                  "nullable": true,
-                                  "items": {
-                                    "type": "string",
-                                    "format": "uri",
-                                    "example": "https://assets.example.com/produce/apples.jpg",
-                                    "description": "A fully qualified URL to an image asset"
-                                  }
-                                }
-                              },
-                              "required": [
-                                "reservationId",
-                                "productId",
-                                "title",
-                                "pricePerOz",
-                                "quantityOz",
-                                "isSubscription",
-                                "expiresAt",
-                                "images"
-                              ]
-                            },
-                            "description": "List of items in the cart belonging to this specific seller"
-                          }
-                        },
-                        "required": [
-                          "seller",
-                          "items"
-                        ]
-                      },
-                      "description": "User shopping cart grouped by seller"
-                    }
-                  },
-                  "required": [
-                    "cart"
-                  ]
+                  "$ref": "#/components/schemas/GetCartResponse"
                 }
               }
             }
@@ -2627,15 +2791,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2654,31 +2810,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "productId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "example": "123e4567-e89b-12d3-a456-426614174000",
-                    "description": "The standard UUID identifier for the resource"
-                  },
-                  "quantityOz": {
-                    "type": "number",
-                    "minimum": 0,
-                    "example": 16,
-                    "description": "Weight in ounces (oz)"
-                  },
-                  "isSubscription": {
-                    "type": "boolean",
-                    "default": false,
-                    "example": false,
-                    "description": "Whether this item should be added as a recurring subscription"
-                  }
-                },
-                "required": [
-                  "productId",
-                  "quantityOz"
-                ]
+                "$ref": "#/components/schemas/AddToCartPayload"
               }
             }
           }
@@ -2689,21 +2821,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "entityId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "example": "123e4567-e89b-12d3-a456-426614174000"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "entityId"
-                  ]
+                  "$ref": "#/components/schemas/SuccessWithEntity"
                 }
               }
             }
@@ -2713,15 +2831,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2739,9 +2849,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
+              "$ref": "#/components/schemas/EntityId"
             },
             "required": true,
             "name": "id",
@@ -2754,15 +2862,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -2772,15 +2872,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2799,34 +2891,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "sellerId": {
-                    "type": "string",
-                    "example": "user_123456789",
-                    "description": "The unique identifier for the user, prefixed with \"user_\""
-                  },
-                  "fulfillmentType": {
-                    "type": "string",
-                    "enum": [
-                      "pickup",
-                      "delivery"
-                    ],
-                    "example": "delivery",
-                    "description": "The fulfillment type for completing an order"
-                  },
-                  "scheduledTime": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2026-03-27T09:00:00Z",
-                    "description": "ISO 8601 UTC timestamp"
-                  }
-                },
-                "required": [
-                  "sellerId",
-                  "fulfillmentType",
-                  "scheduledTime"
-                ]
+                "$ref": "#/components/schemas/CreateCheckoutSessionPayload"
               }
             }
           }
@@ -2837,18 +2902,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "url": {
-                      "type": "string",
-                      "format": "uri",
-                      "example": "https://checkout.stripe.com/c/pay/cs_test_12345",
-                      "description": "The URL to redirect the user to for Stripe Checkout."
-                    }
-                  },
-                  "required": [
-                    "url"
-                  ]
+                  "$ref": "#/components/schemas/CheckoutSessionResponse"
                 }
               }
             }
@@ -2858,15 +2912,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2876,15 +2922,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2914,15 +2952,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -2953,15 +2983,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -2994,14 +3016,7 @@
           },
           {
             "schema": {
-              "type": "string",
-              "enum": [
-                "pending",
-                "completed",
-                "canceled"
-              ],
-              "example": "pending",
-              "description": "The lifecycle status of the order"
+              "$ref": "#/components/schemas/OrderStatus"
             },
             "required": false,
             "description": "The lifecycle status of the order",
@@ -3036,15 +3051,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3062,10 +3069,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000",
-              "description": "The standard UUID identifier for the resource"
+              "$ref": "#/components/schemas/ResourceId"
             },
             "required": true,
             "description": "The standard UUID identifier for the resource",
@@ -3077,18 +3081,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "newTime": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2026-03-27T09:00:00Z",
-                    "description": "ISO 8601 UTC timestamp"
-                  }
-                },
-                "required": [
-                  "newTime"
-                ]
+                "$ref": "#/components/schemas/RescheduleOrderPayload"
               }
             }
           }
@@ -3099,17 +3092,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true,
-                      "description": "Indicates if the requested order action was processed successfully"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -3119,15 +3102,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3137,15 +3112,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3155,15 +3122,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3181,10 +3140,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000",
-              "description": "The standard UUID identifier for the resource"
+              "$ref": "#/components/schemas/ResourceId"
             },
             "required": true,
             "description": "The standard UUID identifier for the resource",
@@ -3196,18 +3152,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "reason": {
-                    "type": "string",
-                    "minLength": 1,
-                    "example": "Changed my mind",
-                    "description": "The reason for canceling the order"
-                  }
-                },
-                "required": [
-                  "reason"
-                ]
+                "$ref": "#/components/schemas/CancelOrderPayload"
               }
             }
           }
@@ -3218,17 +3163,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true,
-                      "description": "Indicates if the requested order action was processed successfully"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -3238,15 +3173,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3256,15 +3183,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3282,9 +3201,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000"
+              "$ref": "#/components/schemas/EntityId"
             },
             "required": true,
             "name": "id",
@@ -3295,22 +3212,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "active",
-                      "paused",
-                      "canceled"
-                    ],
-                    "example": "active",
-                    "description": "The status of the subscription"
-                  }
-                },
-                "required": [
-                  "status"
-                ]
+                "$ref": "#/components/schemas/UpdateSubscriptionStatusPayload"
               }
             }
           }
@@ -3321,15 +3223,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -3339,15 +3233,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3357,15 +3243,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3383,9 +3261,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "example": "user_123456789",
-              "description": "The unique identifier for the user, prefixed with \"user_\""
+              "$ref": "#/components/schemas/UserId"
             },
             "required": true,
             "description": "The unique identifier for the user, prefixed with \"user_\"",
@@ -3394,13 +3270,7 @@
           },
           {
             "schema": {
-              "type": "string",
-              "enum": [
-                "pickup",
-                "delivery"
-              ],
-              "example": "delivery",
-              "description": "The fulfillment type for completing an order"
+              "$ref": "#/components/schemas/FulfillmentType"
             },
             "required": true,
             "description": "The fulfillment type for completing an order",
@@ -3409,10 +3279,7 @@
           },
           {
             "schema": {
-              "type": "string",
-              "format": "date",
-              "example": "2026-03-27",
-              "description": "ISO 8601 calendar date (YYYY-MM-DD)"
+              "$ref": "#/components/schemas/IsoDate"
             },
             "required": true,
             "description": "ISO 8601 calendar date (YYYY-MM-DD)",
@@ -3426,16 +3293,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "example": [
-                    "09:00",
-                    "10:30",
-                    "14:00"
-                  ],
-                  "description": "An array of available time slots"
+                  "$ref": "#/components/schemas/AvailabilityResponse"
                 }
               }
             }
@@ -3519,7 +3377,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SendMessageRequest"
+                "$ref": "#/components/schemas/SendMessagePayload"
               }
             }
           }
@@ -3530,15 +3388,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -3583,15 +3433,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3622,15 +3464,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3661,15 +3495,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3720,66 +3546,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "sellerId": {
-                        "type": "string",
-                        "example": "user_123456789",
-                        "description": "The unique identifier for the user, prefixed with \"user_\""
-                      },
-                      "name": {
-                        "type": "string",
-                        "nullable": true,
-                        "example": "Green Valley Farm",
-                        "description": "The display name of the grower"
-                      },
-                      "address": {
-                        "type": "string",
-                        "nullable": true,
-                        "minLength": 5,
-                        "example": "123 Farm Lane, Springfield, OR 97477",
-                        "description": "Full physical street address"
-                      },
-                      "produceTypesOrdered": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "example": [
-                          "spinach",
-                          "carrots"
-                        ],
-                        "description": "List of produce categories previously purchased from this grower"
-                      },
-                      "amountOrderedThisMonthLbs": {
-                        "type": "number",
-                        "example": 12.5,
-                        "description": "Total weight of produce ordered from this grower in the current month"
-                      },
-                      "daysSinceFirstOrder": {
-                        "type": "number",
-                        "example": 45,
-                        "description": "Number of days since the first transaction with this grower"
-                      },
-                      "firstOrderDate": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2026-03-27T09:00:00Z",
-                        "description": "ISO 8601 UTC timestamp"
-                      }
-                    },
-                    "required": [
-                      "sellerId",
-                      "name",
-                      "address",
-                      "produceTypesOrdered",
-                      "amountOrderedThisMonthLbs",
-                      "daysSinceFirstOrder",
-                      "firstOrderDate"
-                    ]
-                  }
+                  "$ref": "#/components/schemas/GrowersResponse"
                 }
               }
             }
@@ -3789,15 +3556,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3818,35 +3577,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "totalSpent": {
-                      "type": "number",
-                      "example": 450.75,
-                      "description": "Lifetime total spent"
-                    },
-                    "totalProduceLbs": {
-                      "type": "number",
-                      "example": 60.5,
-                      "description": "Lifetime total produce ordered in pounds"
-                    },
-                    "avgCostPerLb": {
-                      "type": "number",
-                      "example": 7.45,
-                      "description": "Average cost per pound across all orders"
-                    },
-                    "localSourcingPercentage": {
-                      "type": "number",
-                      "example": 75,
-                      "description": "Percentage of orders from sellers in the same city"
-                    }
-                  },
-                  "required": [
-                    "totalSpent",
-                    "totalProduceLbs",
-                    "avgCostPerLb",
-                    "localSourcingPercentage"
-                  ]
+                  "$ref": "#/components/schemas/BillingSummaryResponse"
                 }
               }
             }
@@ -3856,15 +3587,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -3885,88 +3608,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "onOrderThisWeekLbs": {
-                      "type": "number",
-                      "example": 25.4,
-                      "description": "Total weight of produce scheduled for delivery this week"
-                    },
-                    "percentChangeFromLastWeek": {
-                      "type": "number",
-                      "example": 12.5,
-                      "description": "Percentage change in order volume compared to the previous week"
-                    },
-                    "totalSpendThisMonth": {
-                      "type": "number",
-                      "minimum": 0,
-                      "exclusiveMinimum": true,
-                      "example": 12.5,
-                      "description": "Price/Amount in USD"
-                    },
-                    "totalSpendLastMonth": {
-                      "type": "number",
-                      "minimum": 0,
-                      "exclusiveMinimum": true,
-                      "example": 12.5,
-                      "description": "Price/Amount in USD"
-                    },
-                    "activeSubscriptions": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "example": "123e4567-e89b-12d3-a456-426614174000",
-                            "description": "The standard UUID identifier for the resource"
-                          },
-                          "produceName": {
-                            "type": "string",
-                            "example": "Organic Apples",
-                            "description": "Name of the recurring produce item"
-                          },
-                          "amount": {
-                            "type": "number",
-                            "example": 10.5,
-                            "description": "Subscription amount in Lbs"
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "produceName",
-                          "amount"
-                        ]
-                      },
-                      "description": "List of currently active recurring orders"
-                    },
-                    "localGrowersSupplying": {
-                      "type": "number",
-                      "example": 3,
-                      "description": "Count of local growers currently fulfilling orders"
-                    },
-                    "furthestGrowerDistanceMiles": {
-                      "type": "number",
-                      "example": 45.2,
-                      "description": "Distance in miles to the most distant supplier"
-                    },
-                    "avgGrowerDistanceMiles": {
-                      "type": "number",
-                      "example": 18.4,
-                      "description": "Mean distance in miles across all active suppliers"
-                    }
-                  },
-                  "required": [
-                    "onOrderThisWeekLbs",
-                    "percentChangeFromLastWeek",
-                    "totalSpendThisMonth",
-                    "totalSpendLastMonth",
-                    "activeSubscriptions",
-                    "localGrowersSupplying",
-                    "furthestGrowerDistanceMiles",
-                    "avgGrowerDistanceMiles"
-                  ]
+                  "$ref": "#/components/schemas/BuyerDashboardResponse"
                 }
               }
             }
@@ -3976,15 +3618,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4003,7 +3637,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateReview"
+                "$ref": "#/components/schemas/CreateReviewPayload"
               }
             }
           }
@@ -4014,21 +3648,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "entityId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "example": "123e4567-e89b-12d3-a456-426614174000"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "entityId"
-                  ]
+                  "$ref": "#/components/schemas/SuccessWithEntity"
                 }
               }
             }
@@ -4038,15 +3658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4056,15 +3668,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -4083,37 +3687,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "example": "Jane Doe",
-                    "description": "Full name of the person submitting the inquiry"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "jane@example.com",
-                    "description": "Contact email address"
-                  },
-                  "company": {
-                    "type": "string",
-                    "example": "Fresh Eats LLC",
-                    "description": "Optional company or organization name"
-                  },
-                  "message": {
-                    "type": "string",
-                    "minLength": 1,
-                    "example": "I am interested in bulk purchasing.",
-                    "description": "The content of the contact request"
-                  }
-                },
-                "required": [
-                  "name",
-                  "email",
-                  "message"
-                ]
+                "$ref": "#/components/schemas/ContactPayload"
               }
             }
           }
@@ -4124,15 +3698,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "success"
-                  ]
+                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -4142,15 +3708,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
