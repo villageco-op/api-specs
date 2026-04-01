@@ -213,7 +213,7 @@
           "total": {
             "type": "number",
             "example": 45,
-            "description": "Total number of reviews available"
+            "description": "Total number of items available"
           },
           "page": {
             "type": "number",
@@ -361,10 +361,22 @@
         }
       },
       "ProduceListResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/ProduceListItem"
-        }
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProduceListItem"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "ProduceListItem": {
         "type": "object",
@@ -432,62 +444,74 @@
         ]
       },
       "ProduceOrderListResponse": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/components/schemas/ResourceId"
-            },
-            "status": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/OrderStatus"
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/components/schemas/ResourceId"
                 },
-                {
-                  "nullable": true
-                }
-              ]
-            },
-            "fulfillmentType": {
-              "$ref": "#/components/schemas/FulfillmentType"
-            },
-            "scheduledTime": {
-              "$ref": "#/components/schemas/IsoDate"
-            },
-            "totalAmount": {
-              "type": "string",
-              "example": "25.00"
-            },
-            "quantityOz": {
-              "type": "string",
-              "example": "32.0"
-            },
-            "createdAt": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/IsoDateTime"
+                "status": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/OrderStatus"
+                    },
+                    {
+                      "nullable": true
+                    }
+                  ]
                 },
-                {
-                  "nullable": true
+                "fulfillmentType": {
+                  "$ref": "#/components/schemas/FulfillmentType"
+                },
+                "scheduledTime": {
+                  "$ref": "#/components/schemas/IsoDate"
+                },
+                "totalAmount": {
+                  "type": "string",
+                  "example": "25.00"
+                },
+                "quantityOz": {
+                  "type": "string",
+                  "example": "32.0"
+                },
+                "createdAt": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/IsoDateTime"
+                    },
+                    {
+                      "nullable": true
+                    }
+                  ]
+                },
+                "buyer": {
+                  "$ref": "#/components/schemas/ProduceOrderBuyer"
                 }
+              },
+              "required": [
+                "id",
+                "status",
+                "fulfillmentType",
+                "scheduledTime",
+                "totalAmount",
+                "quantityOz",
+                "createdAt",
+                "buyer"
               ]
-            },
-            "buyer": {
-              "$ref": "#/components/schemas/ProduceOrderBuyer"
             }
           },
-          "required": [
-            "id",
-            "status",
-            "fulfillmentType",
-            "scheduledTime",
-            "totalAmount",
-            "quantityOz",
-            "createdAt",
-            "buyer"
-          ]
-        }
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "ProduceOrderBuyer": {
         "type": "object",
@@ -577,6 +601,24 @@
           "id",
           "name",
           "thumbnail"
+        ]
+      },
+      "ProduceResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Produce"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
         ]
       },
       "Produce": {
@@ -761,11 +803,23 @@
           "updatedAt"
         ]
       },
-      "OrdersList": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Order"
-        }
+      "OrdersListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "CancelOrderPayload": {
         "type": "object",
@@ -811,6 +865,21 @@
             "type": "string",
             "description": "Optional timeframe filter (e.g., \"7d\", \"30d\", or ISO range)",
             "example": "recent"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "example": 1,
+            "description": "The page number for pagination"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "example": 10,
+            "description": "Number of items to return per page"
           }
         },
         "required": [
@@ -1343,7 +1412,7 @@
       "GetCartResponse": {
         "type": "object",
         "properties": {
-          "cart": {
+          "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CartSellerGroup"
@@ -1352,7 +1421,7 @@
           }
         },
         "required": [
-          "cart"
+          "data"
         ]
       },
       "CreateCheckoutSessionPayload": {
@@ -1596,16 +1665,40 @@
         ]
       },
       "ConversationsResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Conversation"
-        }
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Conversation"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "MessagesResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Message"
-        }
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "Grower": {
         "type": "object",
@@ -1665,10 +1758,22 @@
         ]
       },
       "GrowersResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Grower"
-        }
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Grower"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "BillingSummaryResponse": {
         "type": "object",
@@ -1810,11 +1915,23 @@
           "amountDollars"
         ]
       },
-      "PayoutHistory": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Payout"
-        }
+      "PayoutHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Payout"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
       },
       "ProduceSales": {
         "type": "object",
@@ -1954,12 +2071,6 @@
           "earningsByProduceThisMonth",
           "sellerLocation"
         ]
-      },
-      "ProduceResponse": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Produce"
-        }
       }
     },
     "parameters": {}
@@ -2431,24 +2542,29 @@
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "default": 20,
-              "example": 20
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
             },
             "required": false,
-            "name": "limit",
+            "description": "The page number for pagination",
+            "name": "page",
             "in": "query"
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "default": 0,
-              "example": 0
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
             },
             "required": false,
-            "name": "offset",
+            "description": "Number of items to return per page",
+            "name": "limit",
             "in": "query"
           }
         ],
@@ -2653,22 +2769,29 @@
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "default": 10
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
             },
             "required": false,
-            "name": "limit",
+            "description": "The page number for pagination",
+            "name": "page",
             "in": "query"
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "default": 0
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
             },
             "required": false,
-            "name": "offset",
+            "description": "Number of items to return per page",
+            "name": "limit",
             "in": "query"
           }
         ],
@@ -2716,31 +2839,38 @@
         "parameters": [
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "default": 20
-            },
-            "required": false,
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "schema": {
-              "type": "number",
-              "nullable": true,
-              "default": 0
-            },
-            "required": false,
-            "name": "offset",
-            "in": "query"
-          },
-          {
-            "schema": {
               "$ref": "#/components/schemas/ProduceStatus"
             },
             "required": false,
             "description": "The status of the produce listing",
             "name": "status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
             "in": "query"
           }
         ],
@@ -3033,6 +3163,33 @@
             "description": "Optional timeframe filter (e.g., \"7d\", \"30d\", or ISO range)",
             "name": "timeframe",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
+            "in": "query"
           }
         ],
         "responses": {
@@ -3041,7 +3198,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrdersList"
+                  "$ref": "#/components/schemas/OrdersListResponse"
                 }
               }
             }
@@ -3308,6 +3465,35 @@
         "tags": [
           "Messaging"
         ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful retrieval of conversations",
@@ -3348,9 +3534,36 @@
               "example": "2026-03-29T00:00:00Z",
               "description": "Filter messages updated after this timestamp"
             },
-            "required": true,
+            "required": false,
             "description": "Filter messages updated after this timestamp",
             "name": "since",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
             "in": "query"
           }
         ],
@@ -3415,6 +3628,33 @@
             "description": "The period for which to fetch payout history.",
             "name": "timeframe",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
+            "in": "query"
           }
         ],
         "responses": {
@@ -3423,7 +3663,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayoutHistory"
+                  "$ref": "#/components/schemas/PayoutHistoryResponse"
                 }
               }
             }
@@ -3513,30 +3753,29 @@
         "parameters": [
           {
             "schema": {
-              "type": "number",
+              "type": "integer",
               "minimum": 1,
-              "maximum": 100,
-              "default": 20,
-              "example": 20,
-              "description": "Number of results to return"
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
             },
             "required": false,
-            "description": "Number of results to return",
-            "name": "limit",
+            "description": "The page number for pagination",
+            "name": "page",
             "in": "query"
           },
           {
             "schema": {
-              "type": "number",
-              "nullable": true,
-              "minimum": 0,
-              "default": 0,
-              "example": 0,
-              "description": "Number of results to skip"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
             },
             "required": false,
-            "description": "Number of results to skip",
-            "name": "offset",
+            "description": "Number of items to return per page",
+            "name": "limit",
             "in": "query"
           }
         ],
