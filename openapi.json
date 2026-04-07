@@ -2071,6 +2071,30 @@
           "earningsByProduceThisMonth",
           "sellerLocation"
         ]
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "$ref": "#/components/schemas/ImageUrl"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "UploadImagePayload": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The image file to upload (JPEG, PNG, WebP)"
+          }
+        },
+        "required": [
+          "file"
+        ]
       }
     },
     "parameters": {}
@@ -2881,6 +2905,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProduceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "operationId": "uploadImage",
+        "description": "Upload an image and get back the public URL to use in other API calls.",
+        "tags": [
+          "Upload"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadImagePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Image successfully uploaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid file upload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
