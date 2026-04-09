@@ -1148,6 +1148,12 @@
             "example": "Alex Farmer",
             "description": "The user’s display name"
           },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://blob.vercel.com/image.png",
+            "description": "The url to the image in vercel blob from the upload image response."
+          },
           "aboutMe": {
             "type": "string",
             "example": "Growing organic berries since 2010.",
