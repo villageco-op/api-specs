@@ -603,22 +603,61 @@
           "thumbnail"
         ]
       },
-      "ProduceResponse": {
+      "ProduceAnalytics": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Produce"
-            }
+          "totalOzSold": {
+            "type": "number"
           },
-          "meta": {
-            "$ref": "#/components/schemas/PaginationMetadata"
+          "totalMonthlyEarnings": {
+            "type": "number"
+          },
+          "numberOfSubscriptions": {
+            "type": "number"
+          },
+          "numberOfOrders": {
+            "type": "number"
+          },
+          "percentSold": {
+            "type": "number"
+          },
+          "upcomingSubscriptionOzNeeded": {
+            "type": "number"
+          },
+          "availableInventory": {
+            "type": "number"
+          },
+          "inventorySufficientForUpcoming": {
+            "type": "boolean"
+          },
+          "nextHarvestDate": {
+            "type": "string"
           }
         },
         "required": [
-          "data",
-          "meta"
+          "totalOzSold",
+          "totalMonthlyEarnings",
+          "numberOfSubscriptions",
+          "numberOfOrders",
+          "percentSold",
+          "upcomingSubscriptionOzNeeded",
+          "availableInventory",
+          "inventorySufficientForUpcoming"
+        ]
+      },
+      "SellerProduceListing": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Produce"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "analytics": {
+                "$ref": "#/components/schemas/ProduceAnalytics"
+              }
+            }
+          }
         ]
       },
       "Produce": {
@@ -728,6 +767,24 @@
           "status",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "SellerProduceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SellerProduceListing"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
         ]
       },
       "Order": {
@@ -2906,11 +2963,11 @@
         ],
         "responses": {
           "200": {
-            "description": "List of the seller's produce",
+            "description": "List of the seller's produce including metrics",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProduceResponse"
+                  "$ref": "#/components/schemas/SellerProduceListResponse"
                 }
               }
             }
