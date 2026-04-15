@@ -787,6 +787,49 @@
           "meta"
         ]
       },
+      "ProduceDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Produce"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "seller": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/UserId"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "Smith Family Farm"
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "image"
+                ]
+              }
+            },
+            "required": [
+              "seller"
+            ]
+          }
+        ]
+      },
       "Order": {
         "type": "object",
         "properties": {
@@ -2135,6 +2178,49 @@
           "sellerLocation"
         ]
       },
+      "ProduceDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Produce"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "seller": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/UserId"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "Smith Family Farm"
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "image"
+                ]
+              }
+            },
+            "required": [
+              "seller"
+            ]
+          }
+        ]
+      },
       "UploadResponse": {
         "type": "object",
         "properties": {
@@ -2827,6 +2913,45 @@
           },
           "404": {
             "description": "Not Found / Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getProduce",
+        "description": "Get details of a specific produce listing. Used by buyers to view items and sellers to populate edit forms.",
+        "tags": [
+          "Produce"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produce listing details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProduceDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Listing Not Found",
             "content": {
               "application/json": {
                 "schema": {
