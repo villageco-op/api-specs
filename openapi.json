@@ -925,6 +925,16 @@
                   "email": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -945,6 +955,16 @@
                   "email": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -1030,6 +1050,16 @@
           "email": {
             "type": "string",
             "nullable": true
+          },
+          "location": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Location"
+              },
+              {
+                "nullable": true
+              }
+            ]
           }
         },
         "required": [
@@ -1197,8 +1227,17 @@
             "type": "string",
             "nullable": true
           },
-          "location": {
-            "nullable": true
+          "lat": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -140737488355328,
+            "maximum": 140737488355327
+          },
+          "lng": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -140737488355328,
+            "maximum": 140737488355327
           },
           "deliveryRangeMiles": {
             "type": "string",
@@ -1234,6 +1273,8 @@
           "goal",
           "address",
           "city",
+          "lat",
+          "lng",
           "deliveryRangeMiles",
           "stripeAccountId",
           "stripeOnboardingComplete",
