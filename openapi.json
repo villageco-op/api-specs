@@ -903,6 +903,139 @@
           "updatedAt"
         ]
       },
+      "OrderDetailResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Order"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "buyer": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "seller": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/ResourceId"
+                    },
+                    "productId": {
+                      "$ref": "#/components/schemas/ResourceId"
+                    },
+                    "productName": {
+                      "type": "string"
+                    },
+                    "quantityOz": {
+                      "type": "string"
+                    },
+                    "pricePerOz": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "productId",
+                    "productName",
+                    "quantityOz",
+                    "pricePerOz"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "buyer",
+              "seller",
+              "items"
+            ]
+          }
+        ]
+      },
+      "OrderItemDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "quantityOz": {
+            "type": "string"
+          },
+          "pricePerOz": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "productName",
+          "quantityOz",
+          "pricePerOz"
+        ]
+      },
+      "UserBasicInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
       "OrdersListResponse": {
         "type": "object",
         "properties": {
@@ -919,6 +1052,17 @@
         "required": [
           "data",
           "meta"
+        ]
+      },
+      "GetOrderParams": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          }
+        },
+        "required": [
+          "id"
         ]
       },
       "CancelOrderPayload": {
@@ -3599,6 +3743,58 @@
           },
           "401": {
             "description": "Unauthorized - User not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "operationId": "getOrderById",
+        "description": "Get detailed information for a specific order by ID. Accessible only by the buyer or seller associated with the order.",
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            },
+            "required": true,
+            "description": "The standard UUID identifier for the resource",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Order does not exist or user lacks permission to view it",
             "content": {
               "application/json": {
                 "schema": {
