@@ -843,6 +843,10 @@
           "sellerId": {
             "type": "string"
           },
+          "stripeReceiptUrl": {
+            "type": "string",
+            "nullable": true
+          },
           "paymentMethod": {
             "type": "string",
             "enum": [
@@ -893,6 +897,7 @@
           "id",
           "buyerId",
           "sellerId",
+          "stripeReceiptUrl",
           "paymentMethod",
           "fulfillmentType",
           "scheduledTime",
