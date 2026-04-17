@@ -2003,15 +2003,19 @@
             "example": "Green Valley Farm",
             "description": "The display name of the grower"
           },
-          "address": {
+          "location": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/Address"
+                "$ref": "#/components/schemas/Location"
               },
               {
                 "nullable": true
               }
             ]
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
           },
           "produceTypesOrdered": {
             "type": "array",
@@ -2041,7 +2045,8 @@
         "required": [
           "sellerId",
           "name",
-          "address",
+          "location",
+          "city",
           "produceTypesOrdered",
           "amountOrderedThisMonthLbs",
           "daysSinceFirstOrder",
