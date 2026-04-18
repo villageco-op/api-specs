@@ -159,12 +159,6 @@
         "example": "https://assets.example.com/produce/apples.jpg",
         "description": "A fully qualified URL to an image asset"
       },
-      "Address": {
-        "type": "string",
-        "minLength": 5,
-        "example": "123 Farm Lane, Springfield, OR 97477",
-        "description": "Full physical street address"
-      },
       "Location": {
         "type": "object",
         "properties": {
@@ -179,20 +173,34 @@
             "example": -122.4194
           },
           "address": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Address"
-              },
-              {
-                "nullable": true
-              }
-            ]
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
           "lat",
           "lng",
-          "address"
+          "address",
+          "city",
+          "state",
+          "country",
+          "zip"
         ]
       },
       "IsoDateTime": {
@@ -1232,6 +1240,18 @@
             "type": "string",
             "nullable": true
           },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
           "lat": {
             "type": "number",
             "nullable": true,
@@ -1278,6 +1298,9 @@
           "goal",
           "address",
           "city",
+          "state",
+          "country",
+          "zip",
           "lat",
           "lng",
           "deliveryRangeMiles",
@@ -1325,10 +1348,20 @@
             ],
             "description": "List of produce the seller specializes in."
           },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "example": "United States of America"
+          },
+          "state": {
+            "type": "string",
+            "nullable": true,
+            "example": "WI"
+          },
           "city": {
             "type": "string",
             "nullable": true,
-            "example": "Madison, WI"
+            "example": "Madison"
           },
           "joinedAt": {
             "anyOf": [
@@ -1369,6 +1402,8 @@
           "image",
           "aboutMe",
           "specialties",
+          "country",
+          "state",
           "city",
           "joinedAt",
           "starRating",
@@ -1471,11 +1506,24 @@
             ]
           },
           "address": {
-            "$ref": "#/components/schemas/Address"
+            "type": "string",
+            "example": "123 West st."
           },
           "city": {
             "type": "string",
             "example": "Madison"
+          },
+          "state": {
+            "type": "string",
+            "example": "WI"
+          },
+          "country": {
+            "type": "string",
+            "example": "United States of America"
+          },
+          "zip": {
+            "type": "string",
+            "example": "54751"
           },
           "lat": {
             "$ref": "#/components/schemas/Latitude"
