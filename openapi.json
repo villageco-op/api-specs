@@ -1594,6 +1594,309 @@
           "status"
         ]
       },
+      "SubscriptionDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "buyerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "quantityOz": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "fulfillmentType": {
+            "type": "string"
+          },
+          "nextDeliveryDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "sellerId": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "produceType": {
+                "type": "string",
+                "nullable": true
+              },
+              "pricePerOz": {
+                "type": "string"
+              },
+              "totalOzInventory": {
+                "type": "string"
+              },
+              "availableBy": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "harvestFrequencyDays": {
+                "type": "integer",
+                "minimum": -2147483648,
+                "maximum": 2147483647
+              },
+              "seasonStart": {
+                "type": "string"
+              },
+              "seasonEnd": {
+                "type": "string"
+              },
+              "images": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "nullable": true
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "nullable": true
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "nullable": true
+                    }
+                  }
+                ]
+              },
+              "isSubscribable": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "status": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  "active",
+                  "paused",
+                  "deleted",
+                  null
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "nullable": true,
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "nullable": true,
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "id",
+              "sellerId",
+              "title",
+              "produceType",
+              "pricePerOz",
+              "totalOzInventory",
+              "availableBy",
+              "harvestFrequencyDays",
+              "seasonStart",
+              "seasonEnd",
+              "images",
+              "isSubscribable",
+              "status",
+              "createdAt",
+              "updatedAt"
+            ],
+            "additionalProperties": {
+              "nullable": true
+            }
+          },
+          "buyer": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "location": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Location"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "seller": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "location": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Location"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "buyerId",
+          "productId",
+          "sellerId",
+          "quantityOz",
+          "status",
+          "fulfillmentType",
+          "nextDeliveryDate",
+          "createdAt",
+          "updatedAt",
+          "product",
+          "buyer",
+          "seller"
+        ]
+      },
+      "GetSubscriptionsQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "example": 1,
+            "description": "The page number for pagination"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "example": 10,
+            "description": "Number of items to return per page"
+          },
+          "buyerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserId"
+              },
+              {
+                "description": "Filter by buyer ID"
+              }
+            ]
+          },
+          "sellerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserId"
+              },
+              {
+                "description": "Filter by seller ID"
+              }
+            ]
+          },
+          "productId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "description": "Filter by product ID"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SubscriptionStatus"
+              },
+              {
+                "description": "Filter by subscription status"
+              }
+            ]
+          }
+        }
+      },
+      "SubscriptionsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionDetailResponse"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
       "StripeOnboardingResponse": {
         "type": "object",
         "properties": {
@@ -2484,231 +2787,6 @@
         },
         "required": [
           "file"
-        ]
-      },
-      "SubscriptionDetailResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "buyerId": {
-            "$ref": "#/components/schemas/UserId"
-          },
-          "productId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "sellerId": {
-            "$ref": "#/components/schemas/UserId"
-          },
-          "quantityOz": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/SubscriptionStatus"
-          },
-          "fulfillmentType": {
-            "type": "string"
-          },
-          "nextDeliveryDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "nullable": true
-          },
-          "updatedAt": {
-            "type": "string",
-            "nullable": true
-          },
-          "product": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "sellerId": {
-                "type": "string"
-              },
-              "title": {
-                "type": "string"
-              },
-              "produceType": {
-                "type": "string",
-                "nullable": true
-              },
-              "pricePerOz": {
-                "type": "string"
-              },
-              "totalOzInventory": {
-                "type": "string"
-              },
-              "availableBy": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "harvestFrequencyDays": {
-                "type": "integer",
-                "minimum": -2147483648,
-                "maximum": 2147483647
-              },
-              "seasonStart": {
-                "type": "string"
-              },
-              "seasonEnd": {
-                "type": "string"
-              },
-              "images": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "nullable": true
-                  },
-                  {
-                    "type": "object",
-                    "additionalProperties": {
-                      "nullable": true
-                    }
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "nullable": true
-                    }
-                  }
-                ]
-              },
-              "isSubscribable": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "status": {
-                "type": "string",
-                "nullable": true,
-                "enum": [
-                  "active",
-                  "paused",
-                  "deleted",
-                  null
-                ]
-              },
-              "createdAt": {
-                "type": "string",
-                "nullable": true,
-                "format": "date-time"
-              },
-              "updatedAt": {
-                "type": "string",
-                "nullable": true,
-                "format": "date-time"
-              }
-            },
-            "required": [
-              "id",
-              "sellerId",
-              "title",
-              "produceType",
-              "pricePerOz",
-              "totalOzInventory",
-              "availableBy",
-              "harvestFrequencyDays",
-              "seasonStart",
-              "seasonEnd",
-              "images",
-              "isSubscribable",
-              "status",
-              "createdAt",
-              "updatedAt"
-            ],
-            "additionalProperties": {
-              "nullable": true
-            }
-          },
-          "buyer": {
-            "type": "object",
-            "nullable": true,
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string",
-                "nullable": true
-              },
-              "email": {
-                "type": "string",
-                "nullable": true
-              },
-              "location": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Location"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
-              }
-            },
-            "required": [
-              "id"
-            ]
-          },
-          "seller": {
-            "type": "object",
-            "nullable": true,
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string",
-                "nullable": true
-              },
-              "email": {
-                "type": "string",
-                "nullable": true
-              },
-              "location": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Location"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
-              }
-            },
-            "required": [
-              "id"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "buyerId",
-          "productId",
-          "sellerId",
-          "quantityOz",
-          "status",
-          "fulfillmentType",
-          "nextDeliveryDate",
-          "createdAt",
-          "updatedAt",
-          "product",
-          "buyer",
-          "seller"
         ]
       }
     },
@@ -4228,6 +4306,140 @@
           },
           "404": {
             "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscriptions": {
+      "get": {
+        "operationId": "getSubscriptions",
+        "description": "Get a paginated list of subscriptions. Filterable by buyerId, sellerId, productId, and status.",
+        "tags": [
+          "Subscriptions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UserId"
+                },
+                {
+                  "description": "Filter by buyer ID"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Filter by buyer ID",
+            "name": "buyerId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UserId"
+                },
+                {
+                  "description": "Filter by seller ID"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Filter by seller ID",
+            "name": "sellerId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ResourceId"
+                },
+                {
+                  "description": "Filter by product ID"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Filter by product ID",
+            "name": "productId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/SubscriptionStatus"
+                },
+                {
+                  "description": "Filter by subscription status"
+                }
+              ]
+            },
+            "required": false,
+            "description": "Filter by subscription status",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated subscriptions list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionsListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Attempting to access data outside user scope",
             "content": {
               "application/json": {
                 "schema": {
