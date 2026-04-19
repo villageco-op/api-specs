@@ -243,6 +243,35 @@
           "totalPages"
         ]
       },
+      "UserBasicInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Location"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
       "CreateProducePayload": {
         "type": "object",
         "properties": {
@@ -875,12 +904,10 @@
           },
           "status": {
             "type": "string",
-            "nullable": true,
             "enum": [
               "pending",
               "completed",
-              "canceled",
-              null
+              "canceled"
             ]
           },
           "cancelReason": {
@@ -1048,35 +1075,6 @@
           "productName",
           "quantityOz",
           "pricePerOz"
-        ]
-      },
-      "UserBasicInfo": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "location": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Location"
-              },
-              {
-                "nullable": true
-              }
-            ]
-          }
-        },
-        "required": [
-          "id"
         ]
       },
       "OrdersListResponse": {
@@ -2487,6 +2485,231 @@
         "required": [
           "file"
         ]
+      },
+      "SubscriptionDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "buyerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "quantityOz": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "fulfillmentType": {
+            "type": "string"
+          },
+          "nextDeliveryDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "sellerId": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "produceType": {
+                "type": "string",
+                "nullable": true
+              },
+              "pricePerOz": {
+                "type": "string"
+              },
+              "totalOzInventory": {
+                "type": "string"
+              },
+              "availableBy": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "harvestFrequencyDays": {
+                "type": "integer",
+                "minimum": -2147483648,
+                "maximum": 2147483647
+              },
+              "seasonStart": {
+                "type": "string"
+              },
+              "seasonEnd": {
+                "type": "string"
+              },
+              "images": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "nullable": true
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "nullable": true
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "nullable": true
+                    }
+                  }
+                ]
+              },
+              "isSubscribable": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "status": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  "active",
+                  "paused",
+                  "deleted",
+                  null
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "nullable": true,
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "nullable": true,
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "id",
+              "sellerId",
+              "title",
+              "produceType",
+              "pricePerOz",
+              "totalOzInventory",
+              "availableBy",
+              "harvestFrequencyDays",
+              "seasonStart",
+              "seasonEnd",
+              "images",
+              "isSubscribable",
+              "status",
+              "createdAt",
+              "updatedAt"
+            ],
+            "additionalProperties": {
+              "nullable": true
+            }
+          },
+          "buyer": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "location": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Location"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "seller": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "location": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Location"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "buyerId",
+          "productId",
+          "sellerId",
+          "quantityOz",
+          "status",
+          "fulfillmentType",
+          "nextDeliveryDate",
+          "createdAt",
+          "updatedAt",
+          "product",
+          "buyer",
+          "seller"
+        ]
       }
     },
     "parameters": {}
@@ -3894,6 +4117,57 @@
           },
           "404": {
             "description": "Not Found - Order does not exist or user lacks permission to view it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscriptions/{id}": {
+      "get": {
+        "operationId": "getSubscriptionById",
+        "description": "Get detailed information for a specific subscription by ID. Accessible only by the buyer or seller associated with the subscription.",
+        "tags": [
+          "Subscriptions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription details successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Subscription does not exist or user lacks permission to view it",
             "content": {
               "application/json": {
                 "schema": {
