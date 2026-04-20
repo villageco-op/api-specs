@@ -394,6 +394,10 @@
           },
           "status": {
             "$ref": "#/components/schemas/ProduceStatus"
+          },
+          "cancelExistingSubscriptions": {
+            "type": "boolean",
+            "description": "If true, forces cancellation of all active subscriptions. Required if frequency changes."
           }
         }
       },
@@ -1583,16 +1587,26 @@
           "platform"
         ]
       },
-      "UpdateSubscriptionStatusPayload": {
+      "UpdateSubscriptionPayload": {
         "type": "object",
         "properties": {
           "status": {
             "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "quantityOz": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "fulfillmentType": {
+            "$ref": "#/components/schemas/FulfillmentType"
+          },
+          "cancelReason": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Reason for canceling or pausing."
           }
-        },
-        "required": [
-          "status"
-        ]
+        }
       },
       "SubscriptionDetailResponse": {
         "type": "object",
@@ -1614,6 +1628,10 @@
           },
           "status": {
             "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "cancelReason": {
+            "type": "string",
+            "nullable": true
           },
           "fulfillmentType": {
             "type": "string"
@@ -1810,6 +1828,7 @@
           "sellerId",
           "quantityOz",
           "status",
+          "cancelReason",
           "fulfillmentType",
           "nextDeliveryDate",
           "createdAt",
@@ -4255,12 +4274,10 @@
             }
           }
         }
-      }
-    },
-    "/api/subscriptions/{id}/status": {
-      "put": {
-        "operationId": "updateSubscriptionStatus",
-        "description": "Manage recurring scheduled purchases. Integrates natively with Stripe to pause or cancel collections.",
+      },
+      "patch": {
+        "operationId": "updateSubscription",
+        "description": "Update a subscription quantity, status (pause/cancel), or fulfillment type. Syncs natively with Stripe.",
         "tags": [
           "Subscriptions"
         ],
@@ -4278,14 +4295,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateSubscriptionStatusPayload"
+                "$ref": "#/components/schemas/UpdateSubscriptionPayload"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Status updated",
+            "description": "Subscription updated",
             "content": {
               "application/json": {
                 "schema": {
