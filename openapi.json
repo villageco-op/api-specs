@@ -1908,12 +1908,32 @@
             }
           },
           "meta": {
-            "$ref": "#/components/schemas/PaginationMetadata"
+            "$ref": "#/components/schemas/SubscriptionsPaginationMetadata"
           }
         },
         "required": [
           "data",
           "meta"
+        ]
+      },
+      "SubscriptionsPaginationMetadata": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "activeCount": {
+                "type": "number",
+                "example": 12,
+                "description": "Total number of active subscriptions matching the current base filters"
+              }
+            },
+            "required": [
+              "activeCount"
+            ]
+          }
         ]
       },
       "StripeOnboardingResponse": {
