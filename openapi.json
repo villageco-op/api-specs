@@ -2449,7 +2449,7 @@
       "GrowersResponse": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/GrowersResponse"
+            "$ref": "#/components/schemas/GrowersResponseBase"
           },
           {
             "type": "object",
@@ -2470,6 +2470,24 @@
               "cities"
             ]
           }
+        ]
+      },
+      "GrowersResponseBase": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Grower"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
         ]
       },
       "BillingSummaryResponse": {
