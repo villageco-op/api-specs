@@ -2447,21 +2447,29 @@
         ]
       },
       "GrowersResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Grower"
-            }
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GrowersResponse"
           },
-          "meta": {
-            "$ref": "#/components/schemas/PaginationMetadata"
+          {
+            "type": "object",
+            "properties": {
+              "cities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "San Francisco",
+                  "Oakland"
+                ],
+                "description": "A complete unpaginated list of all cities the filtered growers are located in."
+              }
+            },
+            "required": [
+              "cities"
+            ]
           }
-        },
-        "required": [
-          "data",
-          "meta"
         ]
       },
       "BillingSummaryResponse": {
@@ -4856,6 +4864,29 @@
             "required": false,
             "description": "Number of items to return per page",
             "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "spinach",
+              "description": "Regex/text check to filter by produce type or grower name"
+            },
+            "required": false,
+            "description": "Regex/text check to filter by produce type or grower name",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "example": 25,
+              "description": "Maximum distance in miles from the buyer address"
+            },
+            "required": false,
+            "description": "Maximum distance in miles from the buyer address",
+            "name": "maxDistance",
             "in": "query"
           }
         ],
