@@ -2769,6 +2769,80 @@
           "sellerLocation"
         ]
       },
+      "MapGrowersQuery": {
+        "type": "object",
+        "properties": {
+          "buyerId": {
+            "type": "string",
+            "example": "usr_123",
+            "description": "Filter map to only show growers this buyer has completed orders with"
+          },
+          "lat": {
+            "type": "number",
+            "nullable": true,
+            "example": 37.7749,
+            "description": "Center latitude for distance filtering"
+          },
+          "lng": {
+            "type": "number",
+            "nullable": true,
+            "example": -122.4194,
+            "description": "Center longitude for distance filtering"
+          },
+          "maxDistance": {
+            "type": "number",
+            "nullable": true,
+            "example": 25,
+            "description": "Maximum distance in miles from the center point"
+          }
+        }
+      },
+      "MapGrower": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "Green Valley Farm"
+          },
+          "lat": {
+            "type": "number",
+            "example": 37.7749
+          },
+          "lng": {
+            "type": "number",
+            "example": -122.4194
+          },
+          "image": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/profile.jpg",
+            "description": "Profile image URL of the grower for avatar map markers"
+          },
+          "rating": {
+            "type": "number",
+            "example": 4.8,
+            "description": "Average star rating"
+          }
+        },
+        "required": [
+          "sellerId",
+          "name",
+          "lat",
+          "lng",
+          "image",
+          "rating"
+        ]
+      },
+      "MapGrowersResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/MapGrower"
+        }
+      },
       "ProduceDetail": {
         "allOf": [
           {
@@ -5015,6 +5089,86 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/growers/growers-map": {
+      "get": {
+        "operationId": "getGrowersForMap",
+        "description": "Fetch a lightweight array of growers tailored for map markers. Optional filters available for user history and location.",
+        "tags": [
+          "GROWERS"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "usr_123",
+              "description": "Filter map to only show growers this buyer has completed orders with"
+            },
+            "required": false,
+            "description": "Filter map to only show growers this buyer has completed orders with",
+            "name": "buyerId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "example": 37.7749,
+              "description": "Center latitude for distance filtering"
+            },
+            "required": false,
+            "description": "Center latitude for distance filtering",
+            "name": "lat",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "example": -122.4194,
+              "description": "Center longitude for distance filtering"
+            },
+            "required": false,
+            "description": "Center longitude for distance filtering",
+            "name": "lng",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "example": 25,
+              "description": "Maximum distance in miles from the center point"
+            },
+            "required": false,
+            "description": "Maximum distance in miles from the center point",
+            "name": "maxDistance",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of lightweight grower marker objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MapGrowersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Missing or invalid coordinate combinations.",
             "content": {
               "application/json": {
                 "schema": {
