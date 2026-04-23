@@ -2887,6 +2887,124 @@
           "$ref": "#/components/schemas/MapGrower"
         }
       },
+      "SourceMapQuery": {
+        "type": "object",
+        "properties": {
+          "produceType": {
+            "type": "string",
+            "description": "Filter map and analytics by a specific produce type."
+          }
+        }
+      },
+      "SourceMapNode": {
+        "type": "object",
+        "properties": {
+          "sellerId": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "lat": {
+            "type": "number",
+            "nullable": true
+          },
+          "lng": {
+            "type": "number",
+            "nullable": true
+          },
+          "totalVolumeOz": {
+            "type": "number",
+            "description": "Total volume bought from this seller"
+          },
+          "totalSpend": {
+            "type": "number",
+            "description": "Total amount spent with this seller"
+          },
+          "primaryProduceType": {
+            "type": "string",
+            "nullable": true,
+            "description": "The most purchased produce type (useful for map icons)"
+          },
+          "produceCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of all produce types bought from this seller"
+          }
+        },
+        "required": [
+          "sellerId",
+          "name",
+          "lat",
+          "lng",
+          "totalVolumeOz",
+          "totalSpend",
+          "primaryProduceType",
+          "produceCategories"
+        ]
+      },
+      "SourceMapNodesResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SourceMapNode"
+        }
+      },
+      "SourceMapAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "totalSpend": {
+            "type": "number",
+            "description": "Total money injected into local economy"
+          },
+          "totalVolumeOz": {
+            "type": "number",
+            "description": "Total volume of local food purchased"
+          },
+          "uniqueGrowers": {
+            "type": "number",
+            "description": "Number of local families/farms supported"
+          },
+          "foodMilesSaved": {
+            "type": "number",
+            "description": "Estimated food miles saved vs supermarket"
+          },
+          "produceBreakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProduceBreakdown"
+            }
+          }
+        },
+        "required": [
+          "totalSpend",
+          "totalVolumeOz",
+          "uniqueGrowers",
+          "foodMilesSaved",
+          "produceBreakdown"
+        ]
+      },
+      "ProduceBreakdown": {
+        "type": "object",
+        "properties": {
+          "produceType": {
+            "type": "string"
+          },
+          "volumeOz": {
+            "type": "number"
+          },
+          "percentage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "produceType",
+          "volumeOz",
+          "percentage"
+        ]
+      },
       "ProduceDetail": {
         "allOf": [
           {
@@ -5149,7 +5267,7 @@
         "operationId": "getGrowersForMap",
         "description": "Fetch a lightweight array of growers tailored for map markers. Optional filters available for user history and location.",
         "tags": [
-          "GROWERS"
+          "Growers"
         ],
         "parameters": [
           {
@@ -5213,6 +5331,122 @@
           },
           "400": {
             "description": "Bad Request - Missing or invalid coordinate combinations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You cannot filter by another user's history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-map/nodes": {
+      "get": {
+        "operationId": "getSourceMapNodes",
+        "description": "Fetch map nodes representing local suppliers, scaled by volume and spend.",
+        "tags": [
+          "SourceMap"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Filter map and analytics by a specific produce type."
+            },
+            "required": false,
+            "description": "Filter map and analytics by a specific produce type.",
+            "name": "produceType",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of supply map nodes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceMapNodesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/source-map/analytics": {
+      "get": {
+        "operationId": "getSourceMapAnalytics",
+        "description": "Fetch overarching impact statistics for the source map sidebar.",
+        "tags": [
+          "SourceMap"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Filter map and analytics by a specific produce type."
+            },
+            "required": false,
+            "description": "Filter map and analytics by a specific produce type.",
+            "name": "produceType",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aggregated analytics object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceMapAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
