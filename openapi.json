@@ -2844,6 +2844,30 @@
             "type": "number",
             "example": 4.8,
             "description": "Average star rating"
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "example": [
+              "Heirloom Tomatoes",
+              "Organic Honey"
+            ],
+            "description": "A list of the growers specialties"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "example": "Nashville",
+            "description": "The growers city."
+          },
+          "distanceMiles": {
+            "type": "number",
+            "nullable": true,
+            "example": 2.5,
+            "description": "Distance from the buyer to the grower."
           }
         },
         "required": [
@@ -2852,7 +2876,9 @@
           "lat",
           "lng",
           "image",
-          "rating"
+          "rating",
+          "city",
+          "distanceMiles"
         ]
       },
       "MapGrowersResponse": {
