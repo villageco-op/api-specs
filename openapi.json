@@ -2893,6 +2893,17 @@
           "produceType": {
             "type": "string",
             "description": "Filter map and analytics by a specific produce type."
+          },
+          "season": {
+            "type": "string",
+            "enum": [
+              "all",
+              "spring",
+              "summer",
+              "winter",
+              "fall"
+            ],
+            "description": "Filter map and analytics by the season an order occurred."
           }
         }
       },
@@ -5369,6 +5380,23 @@
             "description": "Filter map and analytics by a specific produce type.",
             "name": "produceType",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "spring",
+                "summer",
+                "winter",
+                "fall"
+              ],
+              "description": "Filter map and analytics by the season an order occurred."
+            },
+            "required": false,
+            "description": "Filter map and analytics by the season an order occurred.",
+            "name": "season",
+            "in": "query"
           }
         ],
         "responses": {
@@ -5421,6 +5449,23 @@
             "required": false,
             "description": "Filter map and analytics by a specific produce type.",
             "name": "produceType",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "spring",
+                "summer",
+                "winter",
+                "fall"
+              ],
+              "description": "Filter map and analytics by the season an order occurred."
+            },
+            "required": false,
+            "description": "Filter map and analytics by the season an order occurred.",
+            "name": "season",
             "in": "query"
           }
         ],
