@@ -911,12 +911,35 @@
                         "nullable": true
                       }
                     ]
+                  },
+                  "canDeliver": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Does the seller do deliveries?"
+                  },
+                  "deliveryRangeMiles": {
+                    "type": "number",
+                    "nullable": true,
+                    "description": "The sellers maximum delivery range."
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true,
+                        "description": "The sellers pickup location."
+                      }
+                    ]
                   }
                 },
                 "required": [
                   "id",
                   "name",
-                  "image"
+                  "image",
+                  "deliveryRangeMiles",
+                  "location"
                 ]
               }
             },
@@ -3132,12 +3155,35 @@
                         "nullable": true
                       }
                     ]
+                  },
+                  "canDeliver": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Does the seller do deliveries?"
+                  },
+                  "deliveryRangeMiles": {
+                    "type": "number",
+                    "nullable": true,
+                    "description": "The sellers maximum delivery range."
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true,
+                        "description": "The sellers pickup location."
+                      }
+                    ]
                   }
                 },
                 "required": [
                   "id",
                   "name",
-                  "image"
+                  "image",
+                  "deliveryRangeMiles",
+                  "location"
                 ]
               }
             },
