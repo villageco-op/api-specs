@@ -323,6 +323,13 @@
           "totalOzInventory": {
             "$ref": "#/components/schemas/WeightOz"
           },
+          "maxOrderQuantityOz": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "example": "160.00",
+            "description": "Optional maximum ounces a single user can order per checkout"
+          },
           "availableBy": {
             "type": "string",
             "nullable": true,
@@ -386,6 +393,13 @@
           },
           "totalOzInventory": {
             "$ref": "#/components/schemas/WeightOz"
+          },
+          "maxOrderQuantityOz": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "example": "160.00",
+            "description": "Optional maximum ounces a single user can order per checkout"
           },
           "availableBy": {
             "type": "string",
@@ -779,6 +793,10 @@
           "totalOzInventory": {
             "type": "string"
           },
+          "maxOrderQuantityOz": {
+            "type": "string",
+            "nullable": true
+          },
           "availableBy": {
             "type": "string",
             "format": "date-time"
@@ -854,6 +872,7 @@
           "produceType",
           "pricePerOz",
           "totalOzInventory",
+          "maxOrderQuantityOz",
           "availableBy",
           "harvestFrequencyDays",
           "seasonStart",
@@ -1783,6 +1802,10 @@
               "totalOzInventory": {
                 "type": "string"
               },
+              "maxOrderQuantityOz": {
+                "type": "string",
+                "nullable": true
+              },
               "availableBy": {
                 "type": "string",
                 "format": "date-time"
@@ -1858,6 +1881,7 @@
               "produceType",
               "pricePerOz",
               "totalOzInventory",
+              "maxOrderQuantityOz",
               "availableBy",
               "harvestFrequencyDays",
               "seasonStart",
@@ -2140,11 +2164,28 @@
             "example": "16.0",
             "description": "Quantity in ounces currently in cart"
           },
+          "maxOrderQuantityOz": {
+            "type": "string",
+            "example": "32.0",
+            "description": "The maximum allowable order quantity (lowest of stock or seller limit)"
+          },
           "isSubscription": {
             "type": "boolean",
             "nullable": true,
             "example": false,
             "description": "Flag indicating if this is a subscription item"
+          },
+          "subscriptionFrequencyDays": {
+            "type": "number",
+            "nullable": true,
+            "example": 7,
+            "description": "How often the harvest/delivery repeats if this is a subscription"
+          },
+          "subscriptionCostReductionPercent": {
+            "type": "number",
+            "nullable": true,
+            "example": 10,
+            "description": "Percentage discount applied to subscription orders"
           },
           "expiresAt": {
             "$ref": "#/components/schemas/IsoDateTime"
@@ -2163,7 +2204,10 @@
           "title",
           "pricePerOz",
           "quantityOz",
+          "maxOrderQuantityOz",
           "isSubscription",
+          "subscriptionFrequencyDays",
+          "subscriptionCostReductionPercent",
           "expiresAt",
           "images"
         ]
@@ -2186,9 +2230,24 @@
           "name"
         ]
       },
-      "CartSellerGroup": {
+      "CartCheckoutGroup": {
         "type": "object",
         "properties": {
+          "groupId": {
+            "type": "string",
+            "example": "user_1234-sub",
+            "description": "Unique ID for this specific checkout session/group"
+          },
+          "isSubscription": {
+            "type": "boolean",
+            "example": false,
+            "description": "Whether this checkout group represents a recurring subscription checkout"
+          },
+          "deliveryFee": {
+            "type": "string",
+            "example": "8.50",
+            "description": "Estimated delivery fee in USD (calculated via distance) if user opts out of default pickup"
+          },
           "seller": {
             "$ref": "#/components/schemas/CartSeller"
           },
@@ -2197,10 +2256,13 @@
             "items": {
               "$ref": "#/components/schemas/CartItem"
             },
-            "description": "List of items in the cart belonging to this specific seller"
+            "description": "List of items in the cart belonging to this checkout group"
           }
         },
         "required": [
+          "groupId",
+          "isSubscription",
+          "deliveryFee",
           "seller",
           "items"
         ]
@@ -2211,9 +2273,9 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CartSellerGroup"
+              "$ref": "#/components/schemas/CartCheckoutGroup"
             },
-            "description": "User shopping cart grouped by seller"
+            "description": "User shopping cart divided into executable checkouts"
           }
         },
         "required": [
@@ -4148,13 +4210,13 @@
     "/api/cart": {
       "get": {
         "operationId": "getCart",
-        "description": "Fetch user's active cart, grouped by seller. Drops expired reservations automatically.",
+        "description": "Fetch user's active cart. Groups items into checkouts partitioned by Seller AND Subscription vs Single-Purchase configurations. Drops expired reservations automatically.",
         "tags": [
           "Cart"
         ],
         "responses": {
           "200": {
-            "description": "Cart Object",
+            "description": "Cart Checkouts Object",
             "content": {
               "application/json": {
                 "schema": {
