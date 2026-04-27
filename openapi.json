@@ -2220,6 +2220,19 @@
           "data"
         ]
       },
+      "UpdateCartPayload": {
+        "type": "object",
+        "properties": {
+          "quantityOz": {
+            "$ref": "#/components/schemas/WeightOz"
+          },
+          "isSubscription": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether this item should be updated as a recurring subscription"
+          }
+        }
+      },
       "CreateCheckoutSessionPayload": {
         "type": "object",
         "properties": {
@@ -4233,6 +4246,66 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/update/{id}": {
+      "patch": {
+        "operationId": "updateCartItem",
+        "description": "Update cart reservation quantity and subscription status.",
+        "tags": [
+          "Cart"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCartPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Reservation not found or expired",
             "content": {
               "application/json": {
                 "schema": {
