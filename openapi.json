@@ -2221,8 +2221,7 @@
           "name": {
             "type": "string",
             "nullable": true,
-            "example": "Sun-Kissed Orchards",
-            "description": "The name of the seller providing these items"
+            "example": "Sun-Kissed Orchards"
           }
         },
         "required": [
@@ -2235,18 +2234,45 @@
         "properties": {
           "groupId": {
             "type": "string",
-            "example": "user_1234-sub",
-            "description": "Unique ID for this specific checkout session/group"
+            "example": "user_1234-onetime",
+            "description": "Group ID for this specific checkout session"
           },
           "isSubscription": {
             "type": "boolean",
-            "example": false,
-            "description": "Whether this checkout group represents a recurring subscription checkout"
+            "example": true,
+            "description": "True if ANY item in this group is a recurring subscription"
+          },
+          "frequencyDays": {
+            "type": "number",
+            "example": 7,
+            "description": "The harvest/delivery interval for this group (0 if one-time)"
+          },
+          "fulfillmentType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FulfillmentType"
+              },
+              {
+                "example": "pickup",
+                "description": "Current fulfillment type selected for this group (pickup or delivery)"
+              }
+            ]
+          },
+          "availableBy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IsoDateTime"
+              },
+              {
+                "example": "2026-03-25T10:00:00Z",
+                "description": "The latest availableBy date among all items in this group. Represents when the order can actually be fulfilled."
+              }
+            ]
           },
           "deliveryFee": {
             "type": "string",
             "example": "8.50",
-            "description": "Estimated delivery fee in USD (calculated via distance) if user opts out of default pickup"
+            "description": "Estimated delivery fee in USD (applied if user selects delivery)"
           },
           "seller": {
             "$ref": "#/components/schemas/CartSeller"
@@ -2262,6 +2288,9 @@
         "required": [
           "groupId",
           "isSubscription",
+          "frequencyDays",
+          "fulfillmentType",
+          "availableBy",
           "deliveryFee",
           "seller",
           "items"
@@ -2295,23 +2324,35 @@
           }
         }
       },
-      "CreateCheckoutSessionPayload": {
+      "UpdateCartGroupPayload": {
         "type": "object",
         "properties": {
-          "sellerId": {
-            "$ref": "#/components/schemas/UserId"
-          },
           "fulfillmentType": {
-            "$ref": "#/components/schemas/FulfillmentType"
-          },
-          "scheduledTime": {
-            "$ref": "#/components/schemas/IsoDateTime"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FulfillmentType"
+              },
+              {
+                "description": "Update the fulfillment type for this entire checkout group"
+              }
+            ]
           }
         },
         "required": [
-          "sellerId",
-          "fulfillmentType",
-          "scheduledTime"
+          "fulfillmentType"
+        ]
+      },
+      "CreateCheckoutSessionPayload": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "example": "user_1234-sub",
+            "description": "The checkout group ID."
+          }
+        },
+        "required": [
+          "groupId"
         ]
       },
       "CheckoutSessionResponse": {
@@ -4274,6 +4315,16 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4368,6 +4419,56 @@
           },
           "404": {
             "description": "Reservation not found or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/group/{id}": {
+      "patch": {
+        "operationId": "updateCartGroup",
+        "description": "Update settings (like fulfillmentType) for an entire checkout group.",
+        "tags": [
+          "Cart"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCartGroupPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Group updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
