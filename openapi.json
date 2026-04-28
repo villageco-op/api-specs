@@ -2169,6 +2169,11 @@
             "example": "32.0",
             "description": "The maximum allowable order quantity (lowest of stock or seller limit)"
           },
+          "isSubscribable": {
+            "type": "boolean",
+            "default": false,
+            "description": "Can this item be subscribed to (set by the seller)"
+          },
           "isSubscription": {
             "type": "boolean",
             "nullable": true,
