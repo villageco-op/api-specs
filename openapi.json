@@ -151,6 +151,18 @@
         "example": "leafy_greans",
         "description": "The category of the produce."
       },
+      "Season": {
+        "type": "string",
+        "enum": [
+          "all",
+          "spring",
+          "summer",
+          "winter",
+          "fall"
+        ],
+        "example": "spring",
+        "description": "Season enum for filtering produce."
+      },
       "ResourceId": {
         "type": "string",
         "format": "uuid",
@@ -679,12 +691,42 @@
                 "nullable": true
               }
             ]
+          },
+          "price": {
+            "type": "string",
+            "example": "4.50"
+          },
+          "availableInventory": {
+            "type": "string",
+            "example": "160.00"
+          },
+          "availableBy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "seasonStart": {
+            "type": "string",
+            "example": "2024-03-01"
+          },
+          "seasonEnd": {
+            "type": "string",
+            "example": "2024-06-01"
+          },
+          "isSubscribable": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "required": [
           "id",
           "name",
-          "thumbnail"
+          "thumbnail",
+          "price",
+          "availableInventory",
+          "availableBy",
+          "seasonStart",
+          "seasonEnd",
+          "isSubscribable"
         ]
       },
       "ProduceAnalytics": {
@@ -3127,15 +3169,14 @@
             "$ref": "#/components/schemas/ProduceType"
           },
           "season": {
-            "type": "string",
-            "enum": [
-              "all",
-              "spring",
-              "summer",
-              "winter",
-              "fall"
-            ],
-            "description": "Filter map and analytics by the season an order occurred."
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Season"
+              },
+              {
+                "description": "Filter map and analytics by the season an order occurred."
+              }
+            ]
           }
         }
       },
@@ -3715,6 +3756,73 @@
           {
             "schema": {
               "type": "string",
+              "description": "Search produce titles, types, and seller names"
+            },
+            "required": false,
+            "description": "Search produce titles, types, and seller names",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Filter for listings allowing at least this maximum order quantity (oz)"
+            },
+            "required": false,
+            "description": "Filter for listings allowing at least this maximum order quantity (oz)",
+            "name": "maxOrderQuantity",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "description": "Filter for items that are subscribable"
+            },
+            "required": false,
+            "description": "Filter for items that are subscribable",
+            "name": "isSubscribable",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Minimum total available inventory in oz"
+            },
+            "required": false,
+            "description": "Minimum total available inventory in oz",
+            "name": "availableInventory",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Season"
+            },
+            "required": false,
+            "description": "Season enum for filtering produce.",
+            "name": "season",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "format": "date-time",
+              "description": "Filter for items available on or before this date"
+            },
+            "required": false,
+            "description": "Filter for items available on or before this date",
+            "name": "availableBy",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
               "enum": [
                 "true",
                 "false"
@@ -3722,6 +3830,17 @@
             },
             "required": false,
             "name": "hasDelivery",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Minimum price per oz"
+            },
+            "required": false,
+            "description": "Minimum price per oz",
+            "name": "minPrice",
             "in": "query"
           },
           {
@@ -3804,6 +3923,115 @@
             "required": false,
             "description": "Filter for items that offer delivery",
             "name": "hasDelivery",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ProduceType"
+            },
+            "required": false,
+            "description": "The category of the produce.",
+            "name": "produceType",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Search produce titles, types, and seller names"
+            },
+            "required": false,
+            "description": "Search produce titles, types, and seller names",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Filter for listings allowing at least this maximum order quantity (oz)"
+            },
+            "required": false,
+            "description": "Filter for listings allowing at least this maximum order quantity (oz)",
+            "name": "maxOrderQuantity",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "description": "Filter for items that are subscribable"
+            },
+            "required": false,
+            "description": "Filter for items that are subscribable",
+            "name": "isSubscribable",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Minimum total available inventory in oz"
+            },
+            "required": false,
+            "description": "Minimum total available inventory in oz",
+            "name": "availableInventory",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Season"
+            },
+            "required": false,
+            "description": "Season enum for filtering produce.",
+            "name": "season",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "format": "date-time",
+              "description": "Filter for items available on or before this date"
+            },
+            "required": false,
+            "description": "Filter for items available on or before this date",
+            "name": "availableBy",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Minimum price per oz"
+            },
+            "required": false,
+            "description": "Minimum price per oz",
+            "name": "minPrice",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Maximum price per oz"
+            },
+            "required": false,
+            "description": "Maximum price per oz",
+            "name": "maxPrice",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "description": "Maximum distance in miles"
+            },
+            "required": false,
+            "description": "Maximum distance in miles",
+            "name": "maxDistance",
             "in": "query"
           },
           {
@@ -5757,15 +5985,14 @@
           },
           {
             "schema": {
-              "type": "string",
-              "enum": [
-                "all",
-                "spring",
-                "summer",
-                "winter",
-                "fall"
-              ],
-              "description": "Filter map and analytics by the season an order occurred."
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Season"
+                },
+                {
+                  "description": "Filter map and analytics by the season an order occurred."
+                }
+              ]
             },
             "required": false,
             "description": "Filter map and analytics by the season an order occurred.",
@@ -5826,15 +6053,14 @@
           },
           {
             "schema": {
-              "type": "string",
-              "enum": [
-                "all",
-                "spring",
-                "summer",
-                "winter",
-                "fall"
-              ],
-              "description": "Filter map and analytics by the season an order occurred."
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Season"
+                },
+                {
+                  "description": "Filter map and analytics by the season an order occurred."
+                }
+              ]
             },
             "required": false,
             "description": "Filter map and analytics by the season an order occurred.",
