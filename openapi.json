@@ -649,6 +649,10 @@
           "sellerId": {
             "$ref": "#/components/schemas/UserId"
           },
+          "name": {
+            "type": "string",
+            "description": "The sellers name"
+          },
           "lat": {
             "type": "number",
             "example": 43.0731
@@ -667,6 +671,7 @@
         },
         "required": [
           "sellerId",
+          "name",
           "lat",
           "lng",
           "produce"
