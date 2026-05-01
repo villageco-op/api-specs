@@ -687,6 +687,16 @@
             "type": "string",
             "example": "Kale"
           },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProduceType"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
           "thumbnail": {
             "allOf": [
               {
@@ -725,6 +735,7 @@
         "required": [
           "id",
           "name",
+          "type",
           "thumbnail",
           "price",
           "availableInventory",
