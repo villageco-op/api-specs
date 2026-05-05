@@ -3914,6 +3914,22 @@
           },
           {
             "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/UserId"
+                },
+                {
+                  "description": "Filter for produce owned by this seller."
+                }
+              ]
+            },
+            "required": false,
+            "description": "Filter for produce owned by this seller.",
+            "name": "sellerId",
+            "in": "query"
+          },
+          {
+            "schema": {
               "type": "string",
               "enum": [
                 "distance",
