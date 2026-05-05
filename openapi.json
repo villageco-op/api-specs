@@ -326,6 +326,10 @@
             "example": "Organic Honeycrisp Apples",
             "description": "The public title of the produce listing"
           },
+          "description": {
+            "type": "string",
+            "description": "Description of the produce."
+          },
           "produceType": {
             "$ref": "#/components/schemas/ProduceType"
           },
@@ -396,6 +400,10 @@
             "minLength": 1,
             "example": "Organic Honeycrisp Apples",
             "description": "The public title of the produce listing"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the produce."
           },
           "produceType": {
             "$ref": "#/components/schemas/ProduceType"
@@ -524,6 +532,11 @@
           "isSubscribable": {
             "type": "boolean",
             "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the produce written by the seller."
           }
         },
         "required": [
@@ -536,7 +549,8 @@
           "amount",
           "availableBy",
           "distance",
-          "isSubscribable"
+          "isSubscribable",
+          "description"
         ]
       },
       "ProduceOrderListResponse": {
@@ -815,6 +829,10 @@
           "title": {
             "type": "string"
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
           "produceType": {
             "type": "string",
             "nullable": true,
@@ -927,6 +945,7 @@
           "id",
           "sellerId",
           "title",
+          "description",
           "produceType",
           "pricePerOz",
           "totalOzInventory",
@@ -1824,6 +1843,10 @@
               "title": {
                 "type": "string"
               },
+              "description": {
+                "type": "string",
+                "nullable": true
+              },
               "produceType": {
                 "type": "string",
                 "nullable": true,
@@ -1936,6 +1959,7 @@
               "id",
               "sellerId",
               "title",
+              "description",
               "produceType",
               "pricePerOz",
               "totalOzInventory",
