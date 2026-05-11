@@ -1337,6 +1337,16 @@
             "description": "Optional timeframe filter (e.g., \"7d\", \"30d\", or ISO range)",
             "example": "recent"
           },
+          "productId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "description": "Include only orders with order items for this product."
+              }
+            ]
+          },
           "page": {
             "type": "integer",
             "minimum": 1,
@@ -3687,6 +3697,22 @@
             "description": "The direction of the sort",
             "name": "sortOrder",
             "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ResourceId"
+                },
+                {
+                  "description": "Include only reviews connected to orders for this product."
+                }
+              ]
+            },
+            "required": false,
+            "description": "Include only reviews connected to orders for this product.",
+            "name": "productId",
+            "in": "query"
           }
         ],
         "responses": {
@@ -4921,6 +4947,22 @@
             "required": false,
             "description": "Optional timeframe filter (e.g., \"7d\", \"30d\", or ISO range)",
             "name": "timeframe",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ResourceId"
+                },
+                {
+                  "description": "Include only orders with order items for this product."
+                }
+              ]
+            },
+            "required": false,
+            "description": "Include only orders with order items for this product.",
+            "name": "productId",
             "in": "query"
           },
           {
