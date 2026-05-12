@@ -1229,6 +1229,21 @@
                         }
                       ]
                     },
+                    "produceTotalOzInventory": {
+                      "type": "string"
+                    },
+                    "produceAvailableBy": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "produceSeasonStart": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "produceSeasonEnd": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
                     "quantityOz": {
                       "type": "string"
                     },
@@ -1243,6 +1258,10 @@
                     "maxOrderQuantityOz",
                     "isProduceSubscribable",
                     "produceStatus",
+                    "produceTotalOzInventory",
+                    "produceAvailableBy",
+                    "produceSeasonStart",
+                    "produceSeasonEnd",
                     "quantityOz",
                     "pricePerOz"
                   ]
@@ -1287,6 +1306,21 @@
               }
             ]
           },
+          "produceTotalOzInventory": {
+            "type": "string"
+          },
+          "produceAvailableBy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "produceSeasonStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "produceSeasonEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
           "quantityOz": {
             "type": "string"
           },
@@ -1301,6 +1335,10 @@
           "maxOrderQuantityOz",
           "isProduceSubscribable",
           "produceStatus",
+          "produceTotalOzInventory",
+          "produceAvailableBy",
+          "produceSeasonStart",
+          "produceSeasonEnd",
           "quantityOz",
           "pricePerOz"
         ]
