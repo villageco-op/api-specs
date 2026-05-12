@@ -1211,6 +1211,24 @@
                     "productName": {
                       "type": "string"
                     },
+                    "maxOrderQuantityOz": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "isProduceSubscribable": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "produceStatus": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/ProduceStatus"
+                        },
+                        {
+                          "nullable": true
+                        }
+                      ]
+                    },
                     "quantityOz": {
                       "type": "string"
                     },
@@ -1222,6 +1240,9 @@
                     "id",
                     "productId",
                     "productName",
+                    "maxOrderQuantityOz",
+                    "isProduceSubscribable",
+                    "produceStatus",
                     "quantityOz",
                     "pricePerOz"
                   ]
@@ -1248,6 +1269,24 @@
           "productName": {
             "type": "string"
           },
+          "maxOrderQuantityOz": {
+            "type": "string",
+            "nullable": true
+          },
+          "isProduceSubscribable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "produceStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProduceStatus"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
           "quantityOz": {
             "type": "string"
           },
@@ -1259,6 +1298,9 @@
           "id",
           "productId",
           "productName",
+          "maxOrderQuantityOz",
+          "isProduceSubscribable",
+          "produceStatus",
           "quantityOz",
           "pricePerOz"
         ]
