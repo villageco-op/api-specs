@@ -298,6 +298,10 @@
             "type": "string",
             "nullable": true
           },
+          "organization": {
+            "type": "string",
+            "nullable": true
+          },
           "email": {
             "type": "string",
             "nullable": true
@@ -505,6 +509,11 @@
           "sellerName": {
             "type": "string",
             "nullable": true,
+            "example": "John Smith"
+          },
+          "sellerOrg": {
+            "type": "string",
+            "nullable": true,
             "example": "Smith Family Farm"
           },
           "sellerId": {
@@ -544,6 +553,7 @@
           "thumbnail",
           "name",
           "sellerName",
+          "sellerOrg",
           "sellerId",
           "price",
           "amount",
@@ -634,6 +644,11 @@
             "nullable": true,
             "example": "John Doe"
           },
+          "organization": {
+            "type": "string",
+            "nullable": true,
+            "example": "Doe Berry Orchard"
+          },
           "image": {
             "allOf": [
               {
@@ -648,6 +663,7 @@
         "required": [
           "id",
           "name",
+          "organization",
           "image"
         ]
       },
@@ -666,6 +682,11 @@
           "name": {
             "type": "string",
             "description": "The sellers name"
+          },
+          "organization": {
+            "type": "string",
+            "nullable": true,
+            "example": "Doe Berry Orchard"
           },
           "lat": {
             "type": "number",
@@ -686,6 +707,7 @@
         "required": [
           "sellerId",
           "name",
+          "organization",
           "lat",
           "lng",
           "produce"
@@ -996,6 +1018,11 @@
                   "name": {
                     "type": "string",
                     "nullable": true,
+                    "example": "John Smith"
+                  },
+                  "organization": {
+                    "type": "string",
+                    "nullable": true,
                     "example": "Smith Family Farm"
                   },
                   "image": {
@@ -1033,6 +1060,7 @@
                 "required": [
                   "id",
                   "name",
+                  "organization",
                   "image",
                   "deliveryRangeMiles",
                   "location"
@@ -1148,6 +1176,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "organization": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "email": {
                     "type": "string",
                     "nullable": true
@@ -1175,6 +1207,10 @@
                     "type": "string"
                   },
                   "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "organization": {
                     "type": "string",
                     "nullable": true
                   },
@@ -1470,6 +1506,10 @@
             "type": "string",
             "nullable": true
           },
+          "organization": {
+            "type": "string",
+            "nullable": true
+          },
           "aboutMe": {
             "type": "string",
             "nullable": true
@@ -1567,6 +1607,7 @@
           "email",
           "emailVerified",
           "image",
+          "organization",
           "aboutMe",
           "specialties",
           "goal",
@@ -1604,6 +1645,11 @@
                 "nullable": true
               }
             ]
+          },
+          "organization": {
+            "type": "string",
+            "nullable": true,
+            "example": "Green Hill Farms"
           },
           "aboutMe": {
             "type": "string",
@@ -1674,6 +1720,7 @@
           "id",
           "name",
           "image",
+          "organization",
           "aboutMe",
           "specialties",
           "country",
@@ -1752,6 +1799,10 @@
             "format": "uri",
             "example": "https://blob.vercel.com/image.png",
             "description": "The url to the image in vercel blob from the upload image response."
+          },
+          "organization": {
+            "type": "string",
+            "description": "The users organization they are representing if any."
           },
           "aboutMe": {
             "type": "string",
@@ -2079,6 +2130,10 @@
                 "type": "string",
                 "nullable": true
               },
+              "organization": {
+                "type": "string",
+                "nullable": true
+              },
               "email": {
                 "type": "string",
                 "nullable": true
@@ -2106,6 +2161,10 @@
                 "type": "string"
               },
               "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "organization": {
                 "type": "string",
                 "nullable": true
               },
@@ -2398,12 +2457,18 @@
           "name": {
             "type": "string",
             "nullable": true,
+            "example": "Jane Apple"
+          },
+          "organization": {
+            "type": "string",
+            "nullable": true,
             "example": "Sun-Kissed Orchards"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "organization"
         ]
       },
       "CartCheckoutGroup": {
@@ -2798,8 +2863,14 @@
           "name": {
             "type": "string",
             "nullable": true,
+            "example": "Jane Apple",
+            "description": "The name of the grower"
+          },
+          "organization": {
+            "type": "string",
+            "nullable": true,
             "example": "Green Valley Farm",
-            "description": "The display name of the grower"
+            "description": "The organization of the grower"
           },
           "location": {
             "allOf": [
@@ -2843,6 +2914,7 @@
         "required": [
           "sellerId",
           "name",
+          "organization",
           "location",
           "city",
           "produceTypesOrdered",
@@ -3229,6 +3301,11 @@
           "name": {
             "type": "string",
             "nullable": true,
+            "example": "Sarah Smith"
+          },
+          "organization": {
+            "type": "string",
+            "nullable": true,
             "example": "Green Valley Farm"
           },
           "lat": {
@@ -3278,6 +3355,7 @@
         "required": [
           "sellerId",
           "name",
+          "organization",
           "lat",
           "lng",
           "image",
@@ -3436,6 +3514,11 @@
                   "name": {
                     "type": "string",
                     "nullable": true,
+                    "example": "John Smith"
+                  },
+                  "organization": {
+                    "type": "string",
+                    "nullable": true,
                     "example": "Smith Family Farm"
                   },
                   "image": {
@@ -3473,6 +3556,7 @@
                 "required": [
                   "id",
                   "name",
+                  "organization",
                   "image",
                   "deliveryRangeMiles",
                   "location"
