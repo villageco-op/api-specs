@@ -3497,6 +3497,54 @@
           "percentage"
         ]
       },
+      "GeocodePayload": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "minLength": 1,
+            "example": "123 Farm Lane"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Gary"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 2,
+            "example": "IN"
+          },
+          "zip": {
+            "type": "string",
+            "minLength": 5,
+            "example": "46402"
+          }
+        },
+        "required": [
+          "address",
+          "city",
+          "state",
+          "zip"
+        ]
+      },
+      "GeocodeCoordinates": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "example": 41.5934
+          },
+          "lng": {
+            "type": "number",
+            "example": -87.3464
+          }
+        },
+        "required": [
+          "lat",
+          "lng"
+        ]
+      },
       "ProduceDetail": {
         "allOf": [
           {
@@ -6432,6 +6480,56 @@
           },
           "500": {
             "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/location/geocode": {
+      "post": {
+        "operationId": "geocodeAddress",
+        "description": "Resolves raw address field parameters to geographic coordinates via Mapbox.",
+        "tags": [
+          "Location"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeocodePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully geocoded address to lat/lng point coordinates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeocodeCoordinates"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input parameters or unresolvable location parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server initialization error",
             "content": {
               "application/json": {
                 "schema": {
