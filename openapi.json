@@ -1582,10 +1582,6 @@
             "type": "string",
             "nullable": true
           },
-          "stripeAccountId": {
-            "type": "string",
-            "nullable": true
-          },
           "stripeOnboardingComplete": {
             "type": "boolean",
             "nullable": true
@@ -1599,6 +1595,9 @@
             "type": "string",
             "nullable": true,
             "format": "date-time"
+          },
+          "isOnboardingComplete": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -1619,10 +1618,10 @@
           "lat",
           "lng",
           "deliveryRangeMiles",
-          "stripeAccountId",
           "stripeOnboardingComplete",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "isOnboardingComplete"
         ]
       },
       "PublicUserProfile": {
