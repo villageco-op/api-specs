@@ -1909,6 +1909,42 @@
           "platform"
         ]
       },
+      "UnregisterFcmTokenPayload": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android",
+              "web"
+            ],
+            "example": "ios",
+            "description": "The operating system of the device unregistering the token"
+          }
+        },
+        "required": [
+          "platform"
+        ]
+      },
+      "GetFcmStatusQuery": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android",
+              "web"
+            ],
+            "example": "ios",
+            "description": "The operating system of the device"
+          }
+        },
+        "required": [
+          "platform"
+        ]
+      },
       "UpdateSubscriptionPayload": {
         "type": "object",
         "properties": {
@@ -3544,6 +3580,17 @@
           "lng"
         ]
       },
+      "FcmStatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
       "ProduceDetail": {
         "allOf": [
           {
@@ -3808,9 +3855,86 @@
                 }
               }
             }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unregisterFcmToken",
+        "description": "Remove the user's Firebase Cloud Messaging token for the given platform.",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnregisterFcmTokenPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "User not found",
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/fcm-status": {
+      "get": {
+        "operationId": "GetFcmStatus",
+        "description": "Checks if a token exists for the current user and a given platform.",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ios",
+                "android",
+                "web"
+              ],
+              "example": "ios",
+              "description": "The operating system of the device"
+            },
+            "required": true,
+            "description": "The operating system of the device",
+            "name": "platform",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status recieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FcmStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
