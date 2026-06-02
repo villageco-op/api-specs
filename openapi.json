@@ -3537,17 +3537,14 @@
         "properties": {
           "address": {
             "type": "string",
-            "minLength": 1,
             "example": "123 Farm Lane"
           },
           "city": {
             "type": "string",
-            "minLength": 1,
             "example": "Gary"
           },
           "state": {
             "type": "string",
-            "minLength": 2,
             "example": "IN"
           },
           "zip": {
@@ -3557,9 +3554,6 @@
           }
         },
         "required": [
-          "address",
-          "city",
-          "state",
           "zip"
         ]
       },
