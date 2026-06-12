@@ -352,7 +352,6 @@
           },
           "availableBy": {
             "type": "string",
-            "nullable": true,
             "format": "date-time",
             "example": "2026-03-25T10:00:00Z",
             "description": "The date and time when the produce will be ready for pickup or delivery"
@@ -427,7 +426,6 @@
           },
           "availableBy": {
             "type": "string",
-            "nullable": true,
             "format": "date-time",
             "example": "2026-03-25T10:00:00Z",
             "description": "The date and time when the produce will be ready for pickup or delivery"
