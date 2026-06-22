@@ -3583,6 +3583,276 @@
           "status"
         ]
       },
+      "CheckSubdomainResponse": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "available"
+        ]
+      },
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/OrgType"
+          },
+          "name": {
+            "type": "string"
+          },
+          "subdomain": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
+          "lat": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -140737488355328,
+            "maximum": 140737488355327
+          },
+          "lng": {
+            "type": "number",
+            "nullable": true,
+            "minimum": -140737488355328,
+            "maximum": 140737488355327
+          },
+          "createdAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "name",
+          "subdomain",
+          "email",
+          "website",
+          "phone",
+          "image",
+          "address",
+          "city",
+          "state",
+          "country",
+          "zip",
+          "lat",
+          "lng",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "OrgType": {
+        "type": "string",
+        "enum": [
+          "pantry",
+          "restaurant"
+        ]
+      },
+      "CreateOrganizationPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "My Community Pantry"
+          },
+          "type": {
+            "$ref": "#/components/schemas/OrgType"
+          },
+          "address": {
+            "type": "string",
+            "minLength": 1,
+            "example": "123 Main St"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Madison"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "example": "WI"
+          },
+          "country": {
+            "type": "string",
+            "minLength": 1,
+            "example": "United States"
+          },
+          "zip": {
+            "type": "string",
+            "minLength": 1,
+            "example": "53703"
+          },
+          "lat": {
+            "$ref": "#/components/schemas/Latitude"
+          },
+          "lng": {
+            "$ref": "#/components/schemas/Longitude"
+          },
+          "subdomain": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 63,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "description": "Unique subdomain prefix",
+            "example": "mypantry"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "info@mypantry.org"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://mypantry.org"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+16085550199"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://blob.vercel.com/org-photo.png"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "address",
+          "city",
+          "state",
+          "country",
+          "zip",
+          "lat",
+          "lng",
+          "subdomain"
+        ]
+      },
+      "UpdateOrganizationPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "My Community Pantry"
+          },
+          "type": {
+            "$ref": "#/components/schemas/OrgType"
+          },
+          "address": {
+            "type": "string",
+            "minLength": 1,
+            "example": "123 Main St"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Madison"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "example": "WI"
+          },
+          "country": {
+            "type": "string",
+            "minLength": 1,
+            "example": "United States"
+          },
+          "zip": {
+            "type": "string",
+            "minLength": 1,
+            "example": "53703"
+          },
+          "lat": {
+            "$ref": "#/components/schemas/Latitude"
+          },
+          "lng": {
+            "$ref": "#/components/schemas/Longitude"
+          },
+          "subdomain": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 63,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "description": "Unique subdomain prefix",
+            "example": "mypantry"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "info@mypantry.org"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://mypantry.org"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+16085550199"
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://blob.vercel.com/org-photo.png"
+          }
+        }
+      },
       "ProduceDetail": {
         "allOf": [
           {
@@ -4126,6 +4396,239 @@
           },
           "404": {
             "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/organizations/subdomain/check": {
+      "get": {
+        "operationId": "checkSubdomain",
+        "description": "Check if a subdomain is available, and get an alternative suggestion if not.",
+        "tags": [
+          "Organizations"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "example": "mypantry"
+            },
+            "required": true,
+            "name": "subdomain",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subdomain availability check result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckSubdomainResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid subdomain format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/organizations": {
+      "post": {
+        "operationId": "createOrganization",
+        "description": "Create a new Organization account.",
+        "tags": [
+          "Organizations"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Organization created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized user context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict: Subdomain or email already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/organizations/{id}": {
+      "put": {
+        "operationId": "updateOrganization",
+        "description": "Update physical address, type, subdomain, or profile information of an organization.",
+        "tags": [
+          "Organizations"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrganizationPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Organization updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incomplete coordinate variables provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized user context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization target not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Subdomain already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteOrganization",
+        "description": "Delete an organization and clean up associated assets.",
+        "tags": [
+          "Organizations"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized user context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization target not found",
             "content": {
               "application/json": {
                 "schema": {
