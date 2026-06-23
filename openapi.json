@@ -163,6 +163,24 @@
         "example": "spring",
         "description": "Season enum for filtering produce."
       },
+      "orgType": {
+        "type": "string",
+        "enum": [
+          "pantry",
+          "restaurant"
+        ],
+        "example": "pantry",
+        "description": "The organization type."
+      },
+      "orgRole": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "member"
+        ],
+        "example": "member",
+        "description": "The organization role for a user. Defines their permission level."
+      },
       "ResourceId": {
         "type": "string",
         "format": "uuid",
@@ -509,11 +527,6 @@
             "nullable": true,
             "example": "John Smith"
           },
-          "sellerOrg": {
-            "type": "string",
-            "nullable": true,
-            "example": "Smith Family Farm"
-          },
           "sellerId": {
             "$ref": "#/components/schemas/UserId"
           },
@@ -551,7 +564,6 @@
           "thumbnail",
           "name",
           "sellerName",
-          "sellerOrg",
           "sellerId",
           "price",
           "amount",
@@ -642,11 +654,6 @@
             "nullable": true,
             "example": "John Doe"
           },
-          "organization": {
-            "type": "string",
-            "nullable": true,
-            "example": "Doe Berry Orchard"
-          },
           "image": {
             "allOf": [
               {
@@ -661,7 +668,6 @@
         "required": [
           "id",
           "name",
-          "organization",
           "image"
         ]
       },
@@ -680,11 +686,6 @@
           "name": {
             "type": "string",
             "description": "The sellers name"
-          },
-          "organization": {
-            "type": "string",
-            "nullable": true,
-            "example": "Doe Berry Orchard"
           },
           "lat": {
             "type": "number",
@@ -705,7 +706,6 @@
         "required": [
           "sellerId",
           "name",
-          "organization",
           "lat",
           "lng",
           "produce"
@@ -1018,11 +1018,6 @@
                     "nullable": true,
                     "example": "John Smith"
                   },
-                  "organization": {
-                    "type": "string",
-                    "nullable": true,
-                    "example": "Smith Family Farm"
-                  },
                   "image": {
                     "allOf": [
                       {
@@ -1058,7 +1053,6 @@
                 "required": [
                   "id",
                   "name",
-                  "organization",
                   "image",
                   "deliveryRangeMiles",
                   "location"
@@ -1504,9 +1498,19 @@
             "type": "string",
             "nullable": true
           },
-          "organization": {
+          "organizationId": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "format": "uuid"
+          },
+          "orgRole": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "admin",
+              "member",
+              null
+            ]
           },
           "aboutMe": {
             "type": "string",
@@ -1604,7 +1608,8 @@
           "email",
           "emailVerified",
           "image",
-          "organization",
+          "organizationId",
+          "orgRole",
           "aboutMe",
           "specialties",
           "goal",
@@ -1647,6 +1652,16 @@
             "type": "string",
             "nullable": true,
             "example": "Green Hill Farms"
+          },
+          "organizationId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntityId"
+              },
+              {
+                "nullable": true
+              }
+            ]
           },
           "aboutMe": {
             "type": "string",
@@ -1718,6 +1733,7 @@
           "name",
           "image",
           "organization",
+          "organizationId",
           "aboutMe",
           "specialties",
           "country",
@@ -1796,10 +1812,6 @@
             "format": "uri",
             "example": "https://blob.vercel.com/image.png",
             "description": "The url to the image in vercel blob from the upload image response."
-          },
-          "organization": {
-            "type": "string",
-            "description": "The users organization they are representing if any."
           },
           "aboutMe": {
             "type": "string",
@@ -2491,17 +2503,11 @@
             "type": "string",
             "nullable": true,
             "example": "Jane Apple"
-          },
-          "organization": {
-            "type": "string",
-            "nullable": true,
-            "example": "Sun-Kissed Orchards"
           }
         },
         "required": [
           "id",
-          "name",
-          "organization"
+          "name"
         ]
       },
       "CartCheckoutGroup": {
@@ -2899,12 +2905,6 @@
             "example": "Jane Apple",
             "description": "The name of the grower"
           },
-          "organization": {
-            "type": "string",
-            "nullable": true,
-            "example": "Green Valley Farm",
-            "description": "The organization of the grower"
-          },
           "location": {
             "allOf": [
               {
@@ -2947,7 +2947,6 @@
         "required": [
           "sellerId",
           "name",
-          "organization",
           "location",
           "city",
           "produceTypesOrdered",
@@ -3336,11 +3335,6 @@
             "nullable": true,
             "example": "Sarah Smith"
           },
-          "organization": {
-            "type": "string",
-            "nullable": true,
-            "example": "Green Valley Farm"
-          },
           "lat": {
             "type": "number",
             "example": 37.7749
@@ -3388,7 +3382,6 @@
         "required": [
           "sellerId",
           "name",
-          "organization",
           "lat",
           "lng",
           "image",
@@ -3572,31 +3565,6 @@
           "lng"
         ]
       },
-      "FcmStatusResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "status"
-        ]
-      },
-      "CheckSubdomainResponse": {
-        "type": "object",
-        "properties": {
-          "available": {
-            "type": "boolean"
-          },
-          "suggestion": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "available"
-        ]
-      },
       "Organization": {
         "type": "object",
         "properties": {
@@ -3697,7 +3665,9 @@
         "enum": [
           "pantry",
           "restaurant"
-        ]
+        ],
+        "example": "pantry",
+        "description": "The organization type."
       },
       "CreateOrganizationPayload": {
         "type": "object",
@@ -3853,6 +3823,97 @@
           }
         }
       },
+      "CheckSubdomainQuery": {
+        "type": "object",
+        "properties": {
+          "subdomain": {
+            "$ref": "#/components/schemas/CheckSubdomainQuery"
+          }
+        },
+        "required": [
+          "subdomain"
+        ]
+      },
+      "CheckSubdomainResponse": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "suggestion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "available"
+        ]
+      },
+      "CreateInvitePayload": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "colleague@example.com"
+          },
+          "role": {
+            "$ref": "#/components/schemas/OrgRole"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "OrgRole": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "member"
+        ],
+        "default": "member",
+        "example": "member",
+        "description": "The organization role for a user. Defines their permission level."
+      },
+      "AcceptInvitePayload": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "colleague@example.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "a1b2c3d4e5f6"
+          },
+          "orgId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntityId"
+              },
+              {
+                "example": "org_12345"
+              }
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "code",
+          "orgId"
+        ]
+      },
+      "FcmStatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
       "ProduceDetail": {
         "allOf": [
           {
@@ -3871,11 +3932,6 @@
                     "type": "string",
                     "nullable": true,
                     "example": "John Smith"
-                  },
-                  "organization": {
-                    "type": "string",
-                    "nullable": true,
-                    "example": "Smith Family Farm"
                   },
                   "image": {
                     "allOf": [
@@ -3912,7 +3968,6 @@
                 "required": [
                   "id",
                   "name",
-                  "organization",
                   "image",
                   "deliveryRangeMiles",
                   "location"
@@ -4417,10 +4472,14 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "minLength": 1,
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
-              "example": "mypantry"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/CheckSubdomainQuery"
+                },
+                {
+                  "example": "mypantry"
+                }
+              ]
             },
             "required": true,
             "name": "subdomain",
@@ -4629,6 +4688,116 @@
           },
           "404": {
             "description": "Organization target not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/invites/invite": {
+      "post": {
+        "operationId": "inviteToOrg",
+        "description": "Invite a user to the organization by email.",
+        "tags": [
+          "Organizations"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvitePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caller is not associated with an organization or missing information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized caller",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failing email transmission service error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/invites/accept": {
+      "post": {
+        "operationId": "acceptInvite",
+        "description": "Accept an invitation and update user profile roles.",
+        "tags": [
+          "Organizations"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptInvitePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation accepted and account configurations updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters, mismatched values or expired invite record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Target profile not registered",
             "content": {
               "application/json": {
                 "schema": {
