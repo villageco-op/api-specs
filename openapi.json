@@ -4696,6 +4696,45 @@
             }
           }
         }
+      },
+      "get": {
+        "operationId": "getOrganization",
+        "description": "Retrieve an organization using its ID.",
+        "tags": [
+          "Organizations"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Organization not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/invites/invite": {
@@ -4703,7 +4742,7 @@
         "operationId": "inviteToOrg",
         "description": "Invite a user to the organization by email.",
         "tags": [
-          "Organizations"
+          "Invites"
         ],
         "requestBody": {
           "content": {
@@ -4763,7 +4802,7 @@
         "operationId": "acceptInvite",
         "description": "Accept an invitation and update user profile roles.",
         "tags": [
-          "Organizations"
+          "Invites"
         ],
         "requestBody": {
           "content": {
