@@ -3983,10 +3983,21 @@
           "email": {
             "type": "string",
             "nullable": true
+          },
+          "orgRole": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrgRole"
+              },
+              {
+                "nullable": true
+              }
+            ]
           }
         },
         "required": [
-          "id"
+          "id",
+          "orgRole"
         ]
       },
       "OrgMembersListResponse": {
