@@ -4048,6 +4048,60 @@
           "meta"
         ]
       },
+      "Invite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "member"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "expired"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "orgId",
+          "code",
+          "role",
+          "status",
+          "expiresAt",
+          "createdAt"
+        ]
+      },
       "CreateInvitePayload": {
         "type": "object",
         "properties": {
@@ -4129,58 +4183,7 @@
           "data": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "orgId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "code": {
-                  "type": "string",
-                  "nullable": true,
-                  "maxLength": 255
-                },
-                "role": {
-                  "type": "string",
-                  "enum": [
-                    "admin",
-                    "member"
-                  ]
-                },
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "pending",
-                    "accepted",
-                    "expired"
-                  ]
-                },
-                "expiresAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              },
-              "required": [
-                "id",
-                "email",
-                "orgId",
-                "code",
-                "role",
-                "status",
-                "expiresAt",
-                "createdAt"
-              ]
+              "$ref": "#/components/schemas/Invite"
             }
           },
           "meta": {
