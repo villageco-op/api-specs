@@ -4020,27 +4020,7 @@
             }
           },
           "meta": {
-            "type": "object",
-            "properties": {
-              "total": {
-                "type": "number"
-              },
-              "page": {
-                "type": "number"
-              },
-              "limit": {
-                "type": "number"
-              },
-              "totalPages": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "total",
-              "page",
-              "limit",
-              "totalPages"
-            ]
+            "$ref": "#/components/schemas/PaginationMetadata"
           }
         },
         "required": [
@@ -4187,27 +4167,7 @@
             }
           },
           "meta": {
-            "type": "object",
-            "properties": {
-              "total": {
-                "type": "number"
-              },
-              "page": {
-                "type": "number"
-              },
-              "limit": {
-                "type": "number"
-              },
-              "totalPages": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "total",
-              "page",
-              "limit",
-              "totalPages"
-            ]
+            "$ref": "#/components/schemas/PaginationMetadata"
           }
         },
         "required": [
