@@ -4175,6 +4175,293 @@
           "meta"
         ]
       },
+      "Client": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdById": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "address",
+          "active",
+          "organizationId",
+          "createdById",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referrerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referredId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "referrerId",
+          "referredId",
+          "createdAt"
+        ]
+      },
+      "SearchReferrerQuery": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search string matching name, email, or phone number",
+            "example": "Jane Smith"
+          }
+        },
+        "required": [
+          "q"
+        ]
+      },
+      "SearchReferrerResponse": {
+        "type": "object",
+        "properties": {
+          "exactMatch": {
+            "type": "boolean"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/components/schemas/EntityId"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "phone": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "email",
+                "phone"
+              ]
+            }
+          }
+        },
+        "required": [
+          "exactMatch",
+          "results"
+        ]
+      },
+      "CreateClientPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "johndoe@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+15551234567"
+          },
+          "address": {
+            "type": "string",
+            "example": "123 Main St, Springfield"
+          },
+          "referrerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EntityId"
+              },
+              {
+                "example": "a6ccf67a-1ce9-4bba-95df-32efef42d2a4",
+                "description": "The explicit client ID of an existing client who referred this client"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateClientPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetClientsQuery": {
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string",
+            "description": "Filter clients by name, email, or phone number",
+            "example": "John"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Filter clients by active status",
+            "example": true
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "example": 1,
+            "description": "The page number for pagination"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "example": 10,
+            "description": "Number of items to return per page"
+          }
+        }
+      },
+      "ClientResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Client"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "referredBy": {
+                "$ref": "#/components/schemas/ReferredBy"
+              }
+            },
+            "required": [
+              "referredBy"
+            ]
+          }
+        ]
+      },
+      "ReferredBy": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/EntityId"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone"
+        ]
+      },
+      "ClientsListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClientResponse"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMetadata"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
       "FcmStatusResponse": {
         "type": "object",
         "properties": {
@@ -5456,6 +5743,331 @@
           },
           "404": {
             "description": "Missing organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clients": {
+      "post": {
+        "operationId": "createClient",
+        "description": "Add a client into the food pantry registry.",
+        "tags": [
+          "Clients"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Client registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "getClients",
+        "description": "Search and paginate through the organization clients list.",
+        "tags": [
+          "Clients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Filter clients by name, email, or phone number",
+              "example": "John"
+            },
+            "required": false,
+            "description": "Filter clients by name, email, or phone number",
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "boolean",
+              "description": "Filter clients by active status",
+              "example": true
+            },
+            "required": false,
+            "description": "Filter clients by active status",
+            "name": "active",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "description": "The page number for pagination"
+            },
+            "required": false,
+            "description": "The page number for pagination",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10,
+              "example": 10,
+              "description": "Number of items to return per page"
+            },
+            "required": false,
+            "description": "Number of items to return per page",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated client results match details list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clients/search-referrer": {
+      "get": {
+        "operationId": "searchReferrer",
+        "description": "Searches for referral candidates. Returns a single item if a unique exact match is hit.",
+        "tags": [
+          "Clients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Search string matching name, email, or phone number",
+              "example": "Jane Smith"
+            },
+            "required": true,
+            "description": "Search string matching name, email, or phone number",
+            "name": "q",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referrer candidates search payload array",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchReferrerResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clients/{id}": {
+      "put": {
+        "operationId": "updateClient",
+        "description": "Modify details for an existing registered client profile.",
+        "tags": [
+          "Clients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateClientPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Client profile modified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client profile details matching configuration criteria not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteClient",
+        "description": "Completely eliminate target client record parameters permanently.",
+        "tags": [
+          "Clients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client details purged successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client profile parameters targeted for cleanup not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clients/{id}/deactivate": {
+      "post": {
+        "operationId": "deactivateClient",
+        "description": "Toggle the active status flag of a target client profile to inactive.",
+        "tags": [
+          "Clients"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/EntityId"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client marked inactive successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client target registry profile matches criteria not found",
             "content": {
               "application/json": {
                 "schema": {
