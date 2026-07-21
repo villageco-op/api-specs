@@ -4197,6 +4197,22 @@
             "type": "string",
             "nullable": true
           },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
           "active": {
             "type": "boolean"
           },
@@ -4222,6 +4238,10 @@
           "email",
           "phone",
           "address",
+          "city",
+          "state",
+          "country",
+          "zip",
           "active",
           "organizationId",
           "createdById",
@@ -4332,6 +4352,22 @@
             "type": "string",
             "example": "123 Main St, Springfield"
           },
+          "city": {
+            "type": "string",
+            "example": "Madison"
+          },
+          "state": {
+            "type": "string",
+            "example": "WI"
+          },
+          "country": {
+            "type": "string",
+            "example": "United States of America"
+          },
+          "zip": {
+            "type": "string",
+            "example": "54751"
+          },
           "referrerId": {
             "allOf": [
               {
@@ -4366,7 +4402,24 @@
           },
           "address": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "123 Main St, Springfield"
+          },
+          "city": {
+            "type": "string",
+            "example": "Madison"
+          },
+          "state": {
+            "type": "string",
+            "example": "WI"
+          },
+          "country": {
+            "type": "string",
+            "example": "United States of America"
+          },
+          "zip": {
+            "type": "string",
+            "example": "54751"
           }
         }
       },
