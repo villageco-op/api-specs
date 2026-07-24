@@ -4277,6 +4277,31 @@
           "createdAt"
         ]
       },
+      "Referrer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/EntityId"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone"
+        ]
+      },
       "SearchReferrerQuery": {
         "type": "object",
         "properties": {
@@ -4300,29 +4325,7 @@
           "results": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "$ref": "#/components/schemas/EntityId"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "email": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "phone": {
-                  "type": "string",
-                  "nullable": true
-                }
-              },
-              "required": [
-                "id",
-                "name",
-                "email",
-                "phone"
-              ]
+              "$ref": "#/components/schemas/Referrer"
             }
           }
         },
@@ -4462,39 +4465,25 @@
             "type": "object",
             "properties": {
               "referredBy": {
-                "$ref": "#/components/schemas/ReferredBy"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Referrer"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              },
+              "referralCount": {
+                "type": "number",
+                "default": 0,
+                "description": "The number of referrals used by the client."
               }
             },
             "required": [
               "referredBy"
             ]
           }
-        ]
-      },
-      "ReferredBy": {
-        "type": "object",
-        "nullable": true,
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/EntityId"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "email",
-          "phone"
         ]
       },
       "ClientsListResponse": {
