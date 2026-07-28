@@ -3669,6 +3669,12 @@
             "minimum": -140737488355328,
             "maximum": 140737488355327
           },
+          "maxReferrals": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
           "createdAt": {
             "type": "string",
             "nullable": true,
@@ -3696,6 +3702,7 @@
           "zip",
           "lat",
           "lng",
+          "maxReferrals",
           "createdAt",
           "updatedAt"
         ]
@@ -3777,6 +3784,12 @@
             "type": "string",
             "format": "uri",
             "example": "https://blob.vercel.com/org-photo.png"
+          },
+          "maxReferrals": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Maximum number of client referrals."
           }
         },
         "required": [
@@ -3860,6 +3873,12 @@
             "type": "string",
             "format": "uri",
             "example": "https://blob.vercel.com/org-photo.png"
+          },
+          "maxReferrals": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Maximum number of client referrals."
           }
         }
       },
