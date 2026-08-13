@@ -2427,6 +2427,11 @@
             "minLength": 1,
             "example": "I am interested in bulk purchasing.",
             "description": "The content of the contact request"
+          },
+          "website": {
+            "type": "string",
+            "example": "",
+            "description": "Honeypot anti-spam field. Must be empty for legitimate users."
           }
         },
         "required": [
