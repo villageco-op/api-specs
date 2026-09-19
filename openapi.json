@@ -2402,6 +2402,19 @@
           "url"
         ]
       },
+      "StripeStatusResponse": {
+        "type": "object",
+        "properties": {
+          "isComplete": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether the user has completed Stripe onboarding and is eligible to accept payments."
+          }
+        },
+        "required": [
+          "isComplete"
+        ]
+      },
       "ContactPayload": {
         "type": "object",
         "properties": {
@@ -7443,6 +7456,37 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StripeOnboardingResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stripe/connect/status": {
+      "get": {
+        "operationId": "getStripeOnboardingStatus",
+        "description": "Fetch the user Stripe onboarding status, with synchronous fallback check against Stripe.",
+        "tags": [
+          "Stripe"
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding status retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StripeStatusResponse"
                 }
               }
             }
