@@ -562,6 +562,7 @@
           },
           "distance": {
             "type": "number",
+            "nullable": true,
             "example": 5.2,
             "description": "Distance in miles from the user"
           },
