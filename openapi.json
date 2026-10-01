@@ -125,28 +125,13 @@
         "type": "string",
         "enum": [
           "leafy_greens",
-          "cruciferous",
           "root_vegetables",
-          "tubers",
-          "alliums",
-          "nightshades",
-          "cucurbits",
-          "winter_squash",
-          "legumes",
-          "stalks_stems",
-          "mushrooms",
+          "produce_vegetables",
+          "fruit",
           "fresh_herbs",
-          "pome_fruits",
-          "stone_fruits",
-          "citrus",
-          "berries",
-          "melons",
-          "tropical_fruits",
-          "eggs",
-          "raw_honey",
-          "nuts_seeds",
-          "microgreens",
-          "grains_pulses"
+          "mushrooms",
+          "nuts_seeds_grains",
+          "farm_pantry"
         ],
         "example": "leafy_greans",
         "description": "The category of the produce."
@@ -344,6 +329,16 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/Location"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "image": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
               },
               {
                 "nullable": true
@@ -875,28 +870,13 @@
             "nullable": true,
             "enum": [
               "leafy_greens",
-              "cruciferous",
               "root_vegetables",
-              "tubers",
-              "alliums",
-              "nightshades",
-              "cucurbits",
-              "winter_squash",
-              "legumes",
-              "stalks_stems",
-              "mushrooms",
+              "produce_vegetables",
+              "fruit",
               "fresh_herbs",
-              "pome_fruits",
-              "stone_fruits",
-              "citrus",
-              "berries",
-              "melons",
-              "tropical_fruits",
-              "eggs",
-              "raw_honey",
-              "nuts_seeds",
-              "microgreens",
-              "grains_pulses",
+              "mushrooms",
+              "nuts_seeds_grains",
+              "farm_pantry",
               null
             ]
           },
@@ -1166,6 +1146,311 @@
           "updatedAt"
         ]
       },
+      "OrderListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "quantityOz": {
+            "type": "string"
+          },
+          "pricePerOz": {
+            "type": "string"
+          },
+          "product": {
+            "$ref": "#/components/schemas/OrderListItemProduce"
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "quantityOz",
+          "pricePerOz",
+          "product"
+        ]
+      },
+      "OrderListItemProduce": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "number",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "images": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ImageUrl"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "OrderSummary": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Order"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "buyer": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "organizationId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EntityId"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "seller": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "organizationId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EntityId"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "counterparty": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "organizationId": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/EntityId"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "location": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OrderListItem"
+                }
+              }
+            },
+            "required": [
+              "buyer",
+              "seller",
+              "items"
+            ]
+          }
+        ]
+      },
+      "OrderItemDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "productId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "maxOrderQuantityOz": {
+            "type": "string",
+            "nullable": true
+          },
+          "isProduceSubscribable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "produceStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProduceStatus"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "produceTotalOzInventory": {
+            "type": "string"
+          },
+          "produceAvailableBy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "produceSeasonStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "produceSeasonEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantityOz": {
+            "type": "string"
+          },
+          "pricePerOz": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ImageUrl"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "productId",
+          "productName",
+          "maxOrderQuantityOz",
+          "isProduceSubscribable",
+          "produceStatus",
+          "produceTotalOzInventory",
+          "produceAvailableBy",
+          "produceSeasonStart",
+          "produceSeasonEnd",
+          "quantityOz",
+          "pricePerOz",
+          "images"
+        ]
+      },
       "OrderDetailResponse": {
         "allOf": [
           {
@@ -1208,6 +1493,16 @@
                         "nullable": true
                       }
                     ]
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -1243,6 +1538,16 @@
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/Location"
+                      },
+                      {
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "image": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ImageUrl"
                       },
                       {
                         "nullable": true
@@ -1306,6 +1611,13 @@
                     },
                     "pricePerOz": {
                       "type": "string"
+                    },
+                    "images": {
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "$ref": "#/components/schemas/ImageUrl"
+                      }
                     }
                   },
                   "required": [
@@ -1320,7 +1632,8 @@
                     "produceSeasonStart",
                     "produceSeasonEnd",
                     "quantityOz",
-                    "pricePerOz"
+                    "pricePerOz",
+                    "images"
                   ]
                 }
               }
@@ -1333,80 +1646,13 @@
           }
         ]
       },
-      "OrderItemDetail": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "productId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "productName": {
-            "type": "string"
-          },
-          "maxOrderQuantityOz": {
-            "type": "string",
-            "nullable": true
-          },
-          "isProduceSubscribable": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "produceStatus": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProduceStatus"
-              },
-              {
-                "nullable": true
-              }
-            ]
-          },
-          "produceTotalOzInventory": {
-            "type": "string"
-          },
-          "produceAvailableBy": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "produceSeasonStart": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "produceSeasonEnd": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "quantityOz": {
-            "type": "string"
-          },
-          "pricePerOz": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "productId",
-          "productName",
-          "maxOrderQuantityOz",
-          "isProduceSubscribable",
-          "produceStatus",
-          "produceTotalOzInventory",
-          "produceAvailableBy",
-          "produceSeasonStart",
-          "produceSeasonEnd",
-          "quantityOz",
-          "pricePerOz"
-        ]
-      },
       "OrdersListResponse": {
         "type": "object",
         "properties": {
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Order"
+              "$ref": "#/components/schemas/OrderSummary"
             }
           },
           "meta": {
@@ -2067,28 +2313,13 @@
                 "nullable": true,
                 "enum": [
                   "leafy_greens",
-                  "cruciferous",
                   "root_vegetables",
-                  "tubers",
-                  "alliums",
-                  "nightshades",
-                  "cucurbits",
-                  "winter_squash",
-                  "legumes",
-                  "stalks_stems",
-                  "mushrooms",
+                  "produce_vegetables",
+                  "fruit",
                   "fresh_herbs",
-                  "pome_fruits",
-                  "stone_fruits",
-                  "citrus",
-                  "berries",
-                  "melons",
-                  "tropical_fruits",
-                  "eggs",
-                  "raw_honey",
-                  "nuts_seeds",
-                  "microgreens",
-                  "grains_pulses",
+                  "mushrooms",
+                  "nuts_seeds_grains",
+                  "farm_pantry",
                   null
                 ]
               },
@@ -2227,6 +2458,16 @@
                     "nullable": true
                   }
                 ]
+              },
+              "image": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ImageUrl"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
               }
             },
             "required": [
@@ -2262,6 +2503,16 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/Location"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              },
+              "image": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ImageUrl"
                   },
                   {
                     "nullable": true
@@ -4031,6 +4282,16 @@
           "email": {
             "type": "string",
             "nullable": true
+          },
+          "image": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageUrl"
+              },
+              {
+                "nullable": true
+              }
+            ]
           },
           "orgRole": {
             "allOf": [
