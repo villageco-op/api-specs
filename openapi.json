@@ -3443,7 +3443,7 @@
           "meta"
         ]
       },
-      "ProduceSales": {
+      "ProduceAmount": {
         "type": "object",
         "properties": {
           "produceName": {
@@ -3488,9 +3488,9 @@
           "amountSoldDollarsPerProduceThisMonth": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ProduceSales"
+              "$ref": "#/components/schemas/ProduceAmount"
             },
-            "description": "Breakdown of sales revenue by individual produce type"
+            "description": "Breakdown of sales revenue by individual produce name"
           }
         },
         "required": [
@@ -3502,24 +3502,6 @@
           "ytdStartDate",
           "avgPerLbSold",
           "amountSoldDollarsPerProduceThisMonth"
-        ]
-      },
-      "EarningsByProduce": {
-        "type": "object",
-        "properties": {
-          "produceName": {
-            "type": "string",
-            "example": "Tomatoes"
-          },
-          "earned": {
-            "type": "number",
-            "example": 50,
-            "description": "Total dollars earned for this produce item"
-          }
-        },
-        "required": [
-          "produceName",
-          "earned"
         ]
       },
       "SellerDashboardResponse": {
@@ -3553,7 +3535,7 @@
           "earningsByProduceThisMonth": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EarningsByProduce"
+              "$ref": "#/components/schemas/ProduceAmount"
             }
           },
           "sellerLocation": {
