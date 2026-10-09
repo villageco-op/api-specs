@@ -3371,49 +3371,25 @@
             "example": 25.4,
             "description": "Total weight of produce scheduled for delivery this week"
           },
-          "percentChangeFromLastWeek": {
-            "type": "number",
-            "example": 12.5,
-            "description": "Percentage change in order volume compared to the previous week"
-          },
           "totalSpendThisMonth": {
             "$ref": "#/components/schemas/PriceDollars"
           },
-          "totalSpendLastMonth": {
-            "$ref": "#/components/schemas/PriceDollars"
-          },
           "activeSubscriptions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ActiveSubscription"
-            },
-            "description": "List of currently active recurring orders"
+            "type": "number",
+            "example": 3,
+            "description": "Count of active subscriptions"
           },
           "localGrowersSupplying": {
             "type": "number",
             "example": 3,
             "description": "Count of local growers currently fulfilling orders"
-          },
-          "furthestGrowerDistanceMiles": {
-            "type": "number",
-            "example": 45.2,
-            "description": "Distance in miles to the most distant supplier"
-          },
-          "avgGrowerDistanceMiles": {
-            "type": "number",
-            "example": 18.4,
-            "description": "Mean distance in miles across all active suppliers"
           }
         },
         "required": [
           "onOrderThisWeekLbs",
-          "percentChangeFromLastWeek",
           "totalSpendThisMonth",
-          "totalSpendLastMonth",
           "activeSubscriptions",
-          "localGrowersSupplying",
-          "furthestGrowerDistanceMiles",
-          "avgGrowerDistanceMiles"
+          "localGrowersSupplying"
         ]
       },
       "Payout": {
@@ -3553,14 +3529,6 @@
             "type": "number",
             "example": 450
           },
-          "earnedLastMonth": {
-            "type": "number",
-            "example": 320
-          },
-          "soldThisWeekLbs": {
-            "type": "number",
-            "example": 12.5
-          },
           "onTrackWithGoal": {
             "type": "boolean",
             "example": true,
@@ -3570,19 +3538,17 @@
             "type": "number",
             "example": 1000
           },
-          "activeListingsCount": {
+          "completedOrdersThisMonth": {
             "type": "number",
             "example": 2
           },
-          "activeListingsNames": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": [
-              "Tomatoes",
-              "Corn"
-            ]
+          "pendingOrders": {
+            "type": "number",
+            "example": 2
+          },
+          "activeSubscriptions": {
+            "type": "number",
+            "example": 2
           },
           "earningsByProduceThisMonth": {
             "type": "array",
@@ -3596,12 +3562,11 @@
         },
         "required": [
           "earnedThisMonth",
-          "earnedLastMonth",
-          "soldThisWeekLbs",
           "onTrackWithGoal",
           "monthlyGoal",
-          "activeListingsCount",
-          "activeListingsNames",
+          "completedOrdersThisMonth",
+          "pendingOrders",
+          "activeSubscriptions",
           "earningsByProduceThisMonth",
           "sellerLocation"
         ]
