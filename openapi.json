@@ -495,6 +495,182 @@
           }
         }
       },
+      "ProduceMapQuery": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "$ref": "#/components/schemas/Latitude"
+          },
+          "lng": {
+            "$ref": "#/components/schemas/Longitude"
+          },
+          "radiusMiles": {
+            "type": "number",
+            "nullable": true,
+            "default": 50,
+            "description": "Search radius in miles",
+            "example": 25
+          },
+          "produceType": {
+            "$ref": "#/components/schemas/ProduceType"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search produce titles, types, and seller names"
+          },
+          "maxOrderQuantity": {
+            "type": "number",
+            "nullable": true,
+            "description": "Filter for listings allowing at least this maximum order quantity (oz)"
+          },
+          "isSubscribable": {
+            "type": "string",
+            "enum": [
+              "true",
+              "false"
+            ],
+            "description": "Filter for items that are subscribable"
+          },
+          "availableInventory": {
+            "type": "number",
+            "nullable": true,
+            "description": "Minimum total available inventory in oz"
+          },
+          "season": {
+            "$ref": "#/components/schemas/Season"
+          },
+          "availableBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Filter for items available on or before this date"
+          },
+          "hasDelivery": {
+            "type": "string",
+            "enum": [
+              "true",
+              "false"
+            ]
+          },
+          "minPrice": {
+            "type": "number",
+            "nullable": true,
+            "description": "Minimum price per oz"
+          },
+          "maxPrice": {
+            "type": "number",
+            "nullable": true,
+            "description": "Filter for items under a specific price point",
+            "example": 10
+          }
+        },
+        "required": [
+          "lat",
+          "lng"
+        ]
+      },
+      "ProduceQuery": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "$ref": "#/components/schemas/Latitude"
+          },
+          "lng": {
+            "$ref": "#/components/schemas/Longitude"
+          },
+          "sellerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserId"
+              },
+              {
+                "description": "Filter for produce owned by this seller."
+              }
+            ]
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": [
+              "distance",
+              "price"
+            ],
+            "description": "Sort order for the results",
+            "example": "distance"
+          },
+          "hasDelivery": {
+            "type": "string",
+            "enum": [
+              "true",
+              "false"
+            ],
+            "description": "Filter for items that offer delivery"
+          },
+          "produceType": {
+            "$ref": "#/components/schemas/ProduceType"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search produce titles, types, and seller names"
+          },
+          "maxOrderQuantity": {
+            "type": "number",
+            "nullable": true,
+            "description": "Filter for listings allowing at least this maximum order quantity (oz)"
+          },
+          "isSubscribable": {
+            "type": "string",
+            "enum": [
+              "true",
+              "false"
+            ],
+            "description": "Filter for items that are subscribable"
+          },
+          "availableInventory": {
+            "type": "number",
+            "nullable": true,
+            "description": "Minimum total available inventory in oz"
+          },
+          "season": {
+            "$ref": "#/components/schemas/Season"
+          },
+          "availableBy": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "Filter for items available on or before this date"
+          },
+          "minPrice": {
+            "type": "number",
+            "nullable": true,
+            "description": "Minimum price per oz"
+          },
+          "maxPrice": {
+            "type": "number",
+            "nullable": true,
+            "description": "Maximum price per oz"
+          },
+          "maxDistance": {
+            "type": "number",
+            "nullable": true,
+            "description": "Maximum distance in miles"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "example": 1,
+            "description": "The page number for pagination"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "example": 10,
+            "description": "Number of items to return per page"
+          }
+        }
+      },
       "ProduceListResponse": {
         "type": "object",
         "properties": {
@@ -591,59 +767,7 @@
           "data": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "$ref": "#/components/schemas/ResourceId"
-                },
-                "status": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/OrderStatus"
-                    },
-                    {
-                      "nullable": true
-                    }
-                  ]
-                },
-                "fulfillmentType": {
-                  "$ref": "#/components/schemas/FulfillmentType"
-                },
-                "scheduledTime": {
-                  "$ref": "#/components/schemas/IsoDate"
-                },
-                "totalAmount": {
-                  "type": "string",
-                  "example": "25.00"
-                },
-                "quantityOz": {
-                  "type": "string",
-                  "example": "32.0"
-                },
-                "createdAt": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/IsoDateTime"
-                    },
-                    {
-                      "nullable": true
-                    }
-                  ]
-                },
-                "buyer": {
-                  "$ref": "#/components/schemas/ProduceOrderBuyer"
-                }
-              },
-              "required": [
-                "id",
-                "status",
-                "fulfillmentType",
-                "scheduledTime",
-                "totalAmount",
-                "quantityOz",
-                "createdAt",
-                "buyer"
-              ]
+              "$ref": "#/components/schemas/ProduceOrderListItem"
             }
           },
           "meta": {
@@ -653,6 +777,61 @@
         "required": [
           "data",
           "meta"
+        ]
+      },
+      "ProduceOrderListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderStatus"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "fulfillmentType": {
+            "$ref": "#/components/schemas/FulfillmentType"
+          },
+          "scheduledTime": {
+            "$ref": "#/components/schemas/IsoDate"
+          },
+          "totalAmount": {
+            "type": "string",
+            "example": "25.00"
+          },
+          "quantityOz": {
+            "type": "string",
+            "example": "32.0"
+          },
+          "createdAt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IsoDateTime"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "buyer": {
+            "$ref": "#/components/schemas/ProduceOrderBuyer"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "fulfillmentType",
+          "scheduledTime",
+          "totalAmount",
+          "quantityOz",
+          "createdAt",
+          "buyer"
         ]
       },
       "ProduceOrderBuyer": {
@@ -1212,153 +1391,33 @@
             "type": "object",
             "properties": {
               "buyer": {
-                "type": "object",
-                "nullable": true,
-                "properties": {
-                  "id": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserBasicInfo"
                   },
-                  "name": {
-                    "type": "string",
+                  {
                     "nullable": true
-                  },
-                  "organizationId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/EntityId"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "email": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "location": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Location"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "image": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
                   }
-                },
-                "required": [
-                  "id"
                 ]
               },
               "seller": {
-                "type": "object",
-                "nullable": true,
-                "properties": {
-                  "id": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserBasicInfo"
                   },
-                  "name": {
-                    "type": "string",
+                  {
                     "nullable": true
-                  },
-                  "organizationId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/EntityId"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "email": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "location": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Location"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "image": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
                   }
-                },
-                "required": [
-                  "id"
                 ]
               },
               "counterparty": {
-                "type": "object",
-                "nullable": true,
-                "properties": {
-                  "id": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserBasicInfo"
                   },
-                  "name": {
-                    "type": "string",
+                  {
                     "nullable": true
-                  },
-                  "organizationId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/EntityId"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "email": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "location": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Location"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "image": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
                   }
-                },
-                "required": [
-                  "id"
                 ]
               },
               "items": {
@@ -1376,7 +1435,7 @@
           }
         ]
       },
-      "OrderItemDetail": {
+      "OrderItemDetails": {
         "type": "object",
         "properties": {
           "id": {
@@ -1460,181 +1519,29 @@
             "type": "object",
             "properties": {
               "buyer": {
-                "type": "object",
-                "nullable": true,
-                "properties": {
-                  "id": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserBasicInfo"
                   },
-                  "name": {
-                    "type": "string",
+                  {
                     "nullable": true
-                  },
-                  "organizationId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/EntityId"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "email": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "location": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Location"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "image": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
                   }
-                },
-                "required": [
-                  "id"
                 ]
               },
               "seller": {
-                "type": "object",
-                "nullable": true,
-                "properties": {
-                  "id": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UserBasicInfo"
                   },
-                  "name": {
-                    "type": "string",
+                  {
                     "nullable": true
-                  },
-                  "organizationId": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/EntityId"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "email": {
-                    "type": "string",
-                    "nullable": true
-                  },
-                  "location": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Location"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "image": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
                   }
-                },
-                "required": [
-                  "id"
                 ]
               },
               "items": {
                 "type": "array",
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "$ref": "#/components/schemas/ResourceId"
-                    },
-                    "productId": {
-                      "$ref": "#/components/schemas/ResourceId"
-                    },
-                    "productName": {
-                      "type": "string"
-                    },
-                    "maxOrderQuantityOz": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "isProduceSubscribable": {
-                      "type": "boolean",
-                      "nullable": true
-                    },
-                    "produceStatus": {
-                      "allOf": [
-                        {
-                          "$ref": "#/components/schemas/ProduceStatus"
-                        },
-                        {
-                          "nullable": true
-                        }
-                      ]
-                    },
-                    "produceTotalOzInventory": {
-                      "type": "string"
-                    },
-                    "produceAvailableBy": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "produceSeasonStart": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "produceSeasonEnd": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "quantityOz": {
-                      "type": "string"
-                    },
-                    "pricePerOz": {
-                      "type": "string"
-                    },
-                    "images": {
-                      "type": "array",
-                      "nullable": true,
-                      "items": {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      }
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "productId",
-                    "productName",
-                    "maxOrderQuantityOz",
-                    "isProduceSubscribable",
-                    "produceStatus",
-                    "produceTotalOzInventory",
-                    "produceAvailableBy",
-                    "produceSeasonStart",
-                    "produceSeasonEnd",
-                    "quantityOz",
-                    "pricePerOz",
-                    "images"
-                  ]
+                  "$ref": "#/components/schemas/OrderItemDetails"
                 }
               }
             },
@@ -2292,236 +2199,26 @@
             "nullable": true
           },
           "product": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "sellerId": {
-                "type": "string"
-              },
-              "title": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string",
-                "nullable": true
-              },
-              "produceType": {
-                "type": "string",
-                "nullable": true,
-                "enum": [
-                  "leafy_greens",
-                  "root_vegetables",
-                  "produce_vegetables",
-                  "fruit",
-                  "fresh_herbs",
-                  "mushrooms",
-                  "nuts_seeds_grains",
-                  "farm_pantry",
-                  null
-                ]
-              },
-              "pricePerOz": {
-                "type": "string"
-              },
-              "totalOzInventory": {
-                "type": "string"
-              },
-              "maxOrderQuantityOz": {
-                "type": "string",
-                "nullable": true
-              },
-              "availableBy": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "harvestFrequencyDays": {
-                "type": "integer",
-                "minimum": -2147483648,
-                "maximum": 2147483647
-              },
-              "seasonStart": {
-                "type": "string"
-              },
-              "seasonEnd": {
-                "type": "string"
-              },
-              "images": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "boolean"
-                  },
-                  {
-                    "nullable": true
-                  },
-                  {
-                    "type": "object",
-                    "additionalProperties": {
-                      "nullable": true
-                    }
-                  },
-                  {
-                    "type": "array",
-                    "items": {
-                      "nullable": true
-                    }
-                  }
-                ]
-              },
-              "isSubscribable": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "status": {
-                "type": "string",
-                "nullable": true,
-                "enum": [
-                  "active",
-                  "paused",
-                  "deleted",
-                  null
-                ]
-              },
-              "createdAt": {
-                "type": "string",
-                "nullable": true,
-                "format": "date-time"
-              },
-              "updatedAt": {
-                "type": "string",
-                "nullable": true,
-                "format": "date-time"
-              }
-            },
-            "required": [
-              "id",
-              "sellerId",
-              "title",
-              "description",
-              "produceType",
-              "pricePerOz",
-              "totalOzInventory",
-              "maxOrderQuantityOz",
-              "availableBy",
-              "harvestFrequencyDays",
-              "seasonStart",
-              "seasonEnd",
-              "images",
-              "isSubscribable",
-              "status",
-              "createdAt",
-              "updatedAt"
-            ],
-            "additionalProperties": {
-              "nullable": true
-            }
+            "$ref": "#/components/schemas/Produce"
           },
           "buyer": {
-            "type": "object",
-            "nullable": true,
-            "properties": {
-              "id": {
-                "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserBasicInfo"
               },
-              "name": {
-                "type": "string",
+              {
                 "nullable": true
-              },
-              "organizationId": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/EntityId"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
-              },
-              "email": {
-                "type": "string",
-                "nullable": true
-              },
-              "location": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Location"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
-              },
-              "image": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/ImageUrl"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
               }
-            },
-            "required": [
-              "id"
             ]
           },
           "seller": {
-            "type": "object",
-            "nullable": true,
-            "properties": {
-              "id": {
-                "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserBasicInfo"
               },
-              "name": {
-                "type": "string",
+              {
                 "nullable": true
-              },
-              "organizationId": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/EntityId"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
-              },
-              "email": {
-                "type": "string",
-                "nullable": true
-              },
-              "location": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Location"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
-              },
-              "image": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/ImageUrl"
-                  },
-                  {
-                    "nullable": true
-                  }
-                ]
               }
-            },
-            "required": [
-              "id"
             ]
           }
         },
@@ -4652,72 +4349,6 @@
         },
         "required": [
           "status"
-        ]
-      },
-      "ProduceDetail": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Produce"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "seller": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "$ref": "#/components/schemas/UserId"
-                  },
-                  "name": {
-                    "type": "string",
-                    "nullable": true,
-                    "example": "John Smith"
-                  },
-                  "image": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/ImageUrl"
-                      },
-                      {
-                        "nullable": true
-                      }
-                    ]
-                  },
-                  "canDeliver": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Does the seller do deliveries?"
-                  },
-                  "deliveryRangeMiles": {
-                    "type": "number",
-                    "nullable": true,
-                    "description": "The sellers maximum delivery range."
-                  },
-                  "location": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/Location"
-                      },
-                      {
-                        "nullable": true,
-                        "description": "The sellers pickup location."
-                      }
-                    ]
-                  }
-                },
-                "required": [
-                  "id",
-                  "name",
-                  "image",
-                  "deliveryRangeMiles",
-                  "location"
-                ]
-              }
-            },
-            "required": [
-              "seller"
-            ]
-          }
         ]
       },
       "UploadResponse": {
@@ -6997,7 +6628,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProduceDetail"
+                  "$ref": "#/components/schemas/ProduceDetails"
                 }
               }
             }
