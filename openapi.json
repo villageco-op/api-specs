@@ -7273,6 +7273,58 @@
         }
       }
     },
+    "/api/orders/{id}": {
+      "get": {
+        "operationId": "getOrderById",
+        "description": "Get detailed information for a specific order by ID. Accessible only by the buyer or seller associated with the order.",
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            },
+            "required": true,
+            "description": "The standard UUID identifier for the resource",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User not logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Order does not exist or user lacks permission to view it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/orders": {
       "get": {
         "operationId": "getOrders",
@@ -7505,58 +7557,6 @@
           },
           "401": {
             "description": "Unauthorized - User not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/orders/{id}": {
-      "get": {
-        "operationId": "getOrderById",
-        "description": "Get detailed information for a specific order by ID. Accessible only by the buyer or seller associated with the order.",
-        "tags": [
-          "Orders"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ResourceId"
-            },
-            "required": true,
-            "description": "The standard UUID identifier for the resource",
-            "name": "id",
-            "in": "path"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Order details successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderDetailResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - User not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found - Order does not exist or user lacks permission to view it",
             "content": {
               "application/json": {
                 "schema": {
